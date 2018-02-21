@@ -1,0 +1,4 @@
+env
+*.pyc
+archive_test_file/
+.DS_Store

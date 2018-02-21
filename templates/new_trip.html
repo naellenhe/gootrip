@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<!-- put extra CSS/JS here -->
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+
+<style>
+  /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+  #map {
+    height: 550px;
+    width: 100%;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .btn-hidden-input-field {
+    background-color: transparent; 
+    border: 1px solid;
+    border-color: transparent;
+  }
+
+  li.attraction-info {
+    list-style-type:none;
+  }
+  .btn-del-minus-mark {
+    font-size: 10px;
+  }
+
+  .marker-container {
+      display: inline-block;
+      position: relative;
+      text-align: center;
+      color: black;
+  }
+
+  .marker-digit {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h3>Hi, {{ session["user_name"] }} </h3>
+
+<div class='row'>
+  <div class='col-xs-8'>
+      <div id='trip-info' data-tripid='{{ trip.trip_id }}')>
+        <h4>You're editing: {{ trip.name }} </h4> 
+      </div>
+  </div>
+  <div class='col-xs-4'>
+    <a href='/trip/{{ trip.trip_id }}'><button id='btn-add-new-dest' class='btn btn-default btn-xs'> Finish </button></a>
+    <a href='/new-trip/{{ trip.trip_id }}'><button class="btn btn-default btn-xs"> + New City</button></a>
+  </div>
+</div>
+
+<!-- Add destination form -->
+
+<div id='new-dest-from-form' class='dest-info panel panel-default'>
+  <!-- non-breaking space &nbsp; -->
+  &nbsp;
+  <input type='text' id='add-dest-name' name='dest-name' placeholder='Desination/City' style='background-color: transparent; border: 1px solid grey'>
+  <button class="btn btn-default btn-xs" id='btn-save-dest-name'>Save</button>
+
+  <div>
+    <ul id='add-attraction' class='attraction-list'>
+      <div id='populated-dest-from-form' class='populated-dests'> <!-- newly populated dest -->
+      </div> <!-- newly populated dest ends here -->
+      <li id='li-attraction' class='add-new-attraction' style='list-style-type:none;'>
+<!--         <div>
+          <input type='text' id='add-attraction-name-form' name='attraction-name' placeholder='new attraction' disabled><br>
+          <textarea id='add-note-form' name='note-content' placeholder='add some notes...' rows='3' cols='30' disabled></textarea>
+        </div> -->
+        <div class='panel-body'>
+          <!-- Button trigger modal -->
+          <button id='btn-populate-attraction-form' class='btn btn-default btn-xs btn-add-new-attraction' data-toggle="modal" data-target="#addNewAttractionModal" style='display: none;' disabled> + Add Another Attraction </button>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</div>
+
+
+{% set label = {'digit': 1} %}
+{% for dest in trip.dests|sort(attribute='created_at') %}
+<div class='dest-info panel panel-default' data-destid='{{ dest.dest_id }}'>
+  <!-- non-breaking space &nbsp; -->
+  &nbsp;
+  <!-- button for deleting -->
+  <button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-dest' data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}' data-tripid='{{ trip.trip_id }}'> - </button>
+  <!-- button for deleting ends -->
+  <input class='btn-hidden-input-field' type='text' value='{{ dest.name }}'>
+      
+<ul class='attraction-list' data-destid='{{ dest.dest_id }}'>
+  {% for att in dest.attractions|sort(attribute='created_at') %}
+  <li class='attraction-info' data-attractionid='{{ att.attraction_id }}'>
+    <!-- button for deleting -->
+    <button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-attraction' data-attractionid='{{ att.attraction_id }}' data-attractionname='{{ att.name }}'> - </button>
+    <!-- button for deleting ends -->
+    <!-- google marker img -->
+    <div class='marker-container'>
+      <img src='/static/red_marker.png' alt='{{ att.name }}' style='width:27px;'>
+      <div class='marker-digit'>{{ label.digit }} </div>
+      {% if label.update({'digit': (label.digit + 1)}) %}  {% endif %}
+    </div>
+    <!-- google marker img ends -->
+    <input class='btn-hidden-input-field' type='text' value='{{ att.name }}' size='35'>
+      {% for note in att.notes|sort(attribute='created_at') %}
+      <div>
+        <ul>
+          <li class='note-info' data-noteid='{{ note.note_id }}'>
+            <input class='btn-hidden-input-field' type='text' value='{{ note.content }}' size='60'>
+          </li>
+        </ul>
+      </div>
+      {% endfor %}<!-- end for att.memos -->
+  </li>
+    {% endfor %}<!-- end for dest.attractions -->
+  <div class='populated-dests'> <!-- newly populated dest -->
+  </div> <!-- newly populated dest ends here -->
+  <li class='add-new-attraction' style='list-style-type:none;'>
+    <div>
+      <!-- Button trigger modal -->
+      <button class='btn btn-default btn-xs btn-add-new-attraction' data-toggle="modal" data-target="#addNewAttractionModal" data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}' style='display: none;'> + Add Another Attraction </button>
+    </div>
+  </li>
+
+</ul>
+</div>
+{% endfor %} <!-- end for trip.dests -->
+
+<!-- Modal -->
+<div class="modal fade" id="addNewAttractionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add a New Attraction</h4>
+      </div>
+      <div class="modal-body">
+        <ul id='add-attraction'>
+          <li id='li-attraction'>
+            <div>
+              <input type='text' id='add-attraction-name' name='attraction-name' placeholder='new attraction'>
+            </div>
+            <div id='note-form'>
+              <div>
+                <textarea class='add-note' name='note-content[]' placeholder='add some notes...' rows='3' cols='30'></textarea>
+              </div>
+            </div>
+            <div>
+              <button id='btn-append-note' class='btn btn-default btn-xs'> + More Notes </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="btn-save-new-attraction" type="submit" class="btn btn-primary" data-dismiss="modal">Save and Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+
+  //When adding new dest, send the dest name to route and add to db
+  //Pass the destid in data-destid attr which will be used later for attractions
+  function getDestId(evt){
+    evt.preventDefault();
+
+    // check if destination is not blank
+    if ( $("#add-dest-name").val() == false ){
+      alert("Destination cannot be empty!");
+    } else {
+      let dest = {'dest_name': $("#add-dest-name").val(),
+                  'trip_id': $('#trip-info').data('tripid')};
+      $.post("/new-dest-id", dest, function(results){
+        $('#populated-dest-from-form, #btn-populate-attraction-form, #new-dest-from-form').attr("data-destid", results.dest_id);
+        $('#populated-dest-from-form, #btn-populate-attraction-form').attr("data-destname", results.name);
+
+        // Upadate the lat/lng to the database
+        getDestGeocode(results.dest_id, results.name);
+
+        console.log('new destination is added. dest_id:', results.dest_id);
+
+        let destHtml = "<button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-dest' data-destid='" + 
+                        results.dest_id + "' data-destname='"+ results.name + "' data-tripid='"+
+                        $('#trip-info').data('tripid') + "'> - </button>" + 
+                        "<input class='btn-hidden-input-field' type='text' value='" + results.name + "'>";
+
+        $("#add-dest-name").replaceWith(destHtml);
+        console.log(destHtml);
+        
+      });
+      $('#btn-populate-attraction-form').prop("disabled", false);
+      $( this ).hide();
+    }
+  }
+  $("#btn-save-dest-name").on('click', getDestId);
+
+
+  /////////////////////////////
+  // geocoding by place name //
+  /////////////////////////////
+
+  // // get geocode for destination 
+  // function getDestGeocode(dest_id, dest_name) {
+  //   let dest = new google.maps.Geocoder();
+  //   let premise = dest_name;
+
+  //   dest.geocode({'address': 'santa cruz'}, function(results, status) {
+  //       if (status === google.maps.GeocoderStatus.OK) {
+  //         map.setCenter(results[0].geometry.location);
+
+  //         // Send the location to db
+  //         let locationResult = {
+  //                         'dest_id': dest_id,
+  //                         'dest_lat': results[0].geometry.location.lat,
+  //                         'dest_lng': results[0].geometry.location.lng
+  //                       };
+
+  //         let loc = {lat: results[0].geometry.location.lat, lng: results[0].geometry.location.lng};
+  //         resetMapCenter(loc);
+
+  //         $.post("/add-dest-coordinate", locationResult, function(results){
+  //           console.log(results);
+  //           console.log("Successfully added coordinate to db");
+  //         });
+
+  //       } else {
+  //         alert('Geocode was not successful for the following reason: ' + status);
+  //       }
+  //     });
+  // }
+
+
+  // //Save all notes to a specific attraction and open new attraction form
+  // function addNewAttraction(evt){
+  //   evt.preventDefault();
+  //   //Multiple notes in one attraction
+  //   // let noteArray = new Array();
+  //   // $("#new-note[name*=note]").each(function(){
+  //   //     noteArray.push($(this).val());
+  //   // });
+    
+  //   // Check the input data is not blank
+  //   if ( $("#add-attraction-name-form").val() == false){
+  //      alert("Attraction cannot be empty!");
+  //   } else {
+  //     let attraction = {'attraction_name': $("#add-attraction-name-form").val(),
+  //                       'dest_id': $('#populated-dest-from-form').data('destid'),
+  //                       'note': $("#add-note-form").val()};
+
+  //     $.post("/new-attraction", attraction, function(results){
+  //       $('#populated-dest-from-form').append("<li><div>" + 
+  //                                    results.name +
+  //                                    "<ul><li> Note: " + results.note +
+  //                                    "</li></ul></div></li>");
+  //       let dest_name = $('#populated-dest-from-form').data('destname');
+  //       let attraction_name = results.name;
+  //       let attraction_id = results.attraction_id;
+  //       addAttractionMarkerByName(dest_name, attraction_id, attraction_name);
+  //       console.log("Found the geocode for:" + results.name);
+
+
+  //     });
+  //     console.log('new attraction is added');
+  //     $('#add-attraction-name-form, #add-note-form').val('');
+  //   }
+  // }
+
+  // $("#btn-save-attraction-name").on('click', addNewAttraction);
+
+</script>
+
+{% endblock %} <!-- end for content block -->
+
+<!-- google map goes here -->
+{% block map %}
+<div id="map"></div>
+
+
+{% endblock %}
+
+{% block footer %}
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM&libraries=places">
+</script>
+
+<!-- <script src="/static/get_geocode.js"></script>
+ -->
+<script src="/static/edit_trip.js"></script>
+<script>
+  placeAutocomplete('add-dest-name');
+</script>
+
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<!-- put extra CSS/JS here -->
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<style>
+  /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+  #map {
+    height: 550px;
+    width: 100%;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  li.attraction-info {
+    list-style-type:none;
+  }
+
+  .marker-container {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    color: black;
+  }
+
+  .marker-digit {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  div.scrollable-area {
+    width: 100%;
+    height: 500px;
+    overflow: scroll;
+  }
+
+  .popover {
+    max-width: 500px;
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h3>Hi, {{ session["user_name"] }}</h3>
+<div class='row'>  <!-- First row -->
+  <div class='col-xs-8'>
+    <h4 id='trip-info' data-tripid='{{ trip.trip_id }}'>Trip: 
+      {{ trip.name }}
+    </h4>
+  </div>
+  <div class='col-xs-4'> 
+    <a href='/edit-trip/{{ trip.trip_id }}'><button id='btn-add-new-dest' class='btn btn-default btn-xs'> Edit </button></a>
+    <a href='/new-trip/{{ trip.trip_id }}'><button class="btn btn-default btn-xs"> + New City</button></a>
+    <br><button id='btn-toggle-photo' class='btn btn-default btn-xs'> Show/Hide Photo </button> 
+  </div>
+</div>  <!-- First row ends -->
+
+<div class='scrollable-area'>
+{% set label = {'digit': 1} %}
+{% for dest in trip.dests|sort(attribute='created_at') %}
+<div class='panel panel-default'>
+  {{ dest.name }}
+  <div>
+
+  <ul class='row attraction-details'>
+  {% for att in dest.attractions|sort(attribute='created_at') %}
+  
+    <li class='attraction-info col-xs-8' data-attractionid='{{ att.attraction_id }}' data->
+  
+      <!-- google marker img -->
+      <div class='marker-container'>
+        <img src='/static/red_marker.png' alt='{{ att.name }}' style='width:27px;'>
+        <div class='marker-digit'>{{ label.digit }} </div>
+        {% if label.update({'digit': (label.digit + 1)}) %}  {% endif %}
+      </div>
+      <!-- google marker img ends -->
+      <!-- boostrap popover on the attraction name -->
+      {% if att.description %}
+      <a class='attraction-pop-wiki' tabindex="0" data-trigger="focus" data-toggle="popover" title='{{ att.name }}' data-content="{{ att.description }}" data-placement="right" data-attractionname='{{ att.name }}'>
+      {{ att.name }}
+      </a>
+      {% else %}
+      {{ att.name }}
+      {% endif %}
+      
+      <!-- boostrap popover on the attraction name ends -->
+        <ul>
+          {% for note in att.notes|sort(attribute='created_at') %}
+            {% if note.content and (note.content != ' ') %}
+            <li>{{ note.content }}
+            </li>
+            {% endif %}
+          {% endfor %}<!-- end for att.notes -->
+        </ul>
+    </li>
+  
+    <div class='attraction-photo col-xs-4'>
+      {% if att.photo %} 
+      <img src={{ att. photo }} alt={{ att.name }} height="100" style='display :none'>
+      {% endif %} <!-- end for att.photo -->
+    </div>
+  {% endfor %}<!-- end for dest.attractions -->
+
+  </ul>
+
+  </div>
+</div>
+
+{% endfor %} <!-- end for trip.dests -->
+</div>
+
+{% endblock %}
+
+
+<!-- google map goes here -->
+{% block map %}
+<!--   <div id="floating-panel">
+    <input id="address" type="textbox" value="Sydney, NSW">
+    <input id="submit" type="button" value="Geocode">
+  </div> -->
+<div id="map"></div>
+<script>
+///////////////
+// basic map //
+///////////////
+  // function initMap() {
+  //   let map = new google.maps.Map(document.getElementById('map'), {
+  //     zoom: 9,
+  //     center: {lat: 37.6653831, lng: -122.4194155}
+  //   });
+
+  //   let infoWindow = new google.maps.InfoWindow({
+  //       width: 150
+  //   });
+
+  //   let bounds  = new google.maps.LatLngBounds();
+
+  //   // Retrieving the information with AJAX
+  //   let tripId = $("#trip-info").data('tripid');
+  //   $.get('/attractions.json', { 'trip_id': tripId }, function (attractions) {
+  //       // JSON looks like:
+  //       // {
+  //       //   "1": {
+  //       //     "attractionLat": "37.7879797", 
+  //       //     "attractionLng": "-122.4075169", 
+  //       //     "attractionName": "Union Square"
+  //       //   }, 
+  //       //   "2": {
+  //       //     "attractionLat": "37.8079996", 
+  //       //     "attractionLng": "-122.4177434", 
+  //       //     "attractionName": "Fishermans Warf"
+  //       //   }, 
+  //       //   "3": {
+  //       //     "attractionLat": "37.8269775", 
+  //       //     "attractionLng": "-122.4229555", 
+  //       //     "attractionName": "Alcatraz Island"
+  //       //   }, 
+  //       //   "4": {
+  //       //     "attractionLat": "37.8199286", 
+  //       //     "attractionLng": "-122.4782551", 
+  //       //     "attractionName": "Golden Gate Bridge"
+  //       //   }
+  //       // }
+  //     let count = Object.keys(attractions).length;
+
+  //     if (count !== 0) {
+  //       let attraction, marker, content, loc;
+  //       let totalLat = 0;
+  //       let totalLng = 0;
+
+  //       for (let key in attractions) {
+  //           attraction = attractions[key];
+
+  //           if (attraction.attractionLat && attraction.attractionLng){
+  //             // Define the marker
+  //             marker_position = new google.maps.LatLng(
+  //                                       attraction.attractionLat,
+  //                                       attraction.attractionLng);
+
+  //             marker = new google.maps.Marker({
+  //                 position: marker_position,
+  //                 map: map,
+  //                 title: 'Attraction name: ' + attraction.attractionName,
+  //                 // place means a business, point of interest or geographic location.
+  //                 // The info window will contain information about the place and an option for the user to save it.
+  //                 place: {
+  //                   location: marker_position,
+  //                   query: attraction.attractionName
+  //                 },
+  //             });
+
+  //             // Everytime a new marker is added, append to bounds
+  //             loc = new google.maps.LatLng(
+  //                               marker.position.lat(),
+  //                               marker.position.lng()
+  //                             );
+  //             bounds.extend(loc);
+
+  //             // Content for InfoWindow.
+  //             content = "Attraction: " + attraction.attractionName
+
+  //             // Inside the loop we call bindInfoWindow passing it the marker,
+  //             // map, infoWindow, and contentString
+  //             bindInfoWindow(marker, map, infoWindow, content);
+
+  //             highlightAttraction(marker, map, key);
+
+  //             // Calculate the average LatLng with all given positions
+  //             totalLat += parseFloat(attraction.attractionLat);
+  //             totalLng += parseFloat(attraction.attractionLng);
+  //           }
+  //       }
+
+  //       if (totalLng  && totalLat){
+  //       map.setCenter({lat: totalLat/count, lng: totalLng/count});
+  //       }
+
+  //       map.fitBounds(bounds);       // auto-zoom
+  //       map.panToBounds(bounds);     // auto-center
+
+  //       // Opens the InfoWindow when marker is clicked.
+  //       function bindInfoWindow(marker, map, infoWindow, content) {
+  //         marker.addListener('click', function() {
+  //           console.log("the marker is clicked!", content);
+  //           infoWindow.close();
+  //           infoWindow.setContent(content);
+  //           infoWindow.open(map, marker);
+  //         });
+  //       }
+
+  //       function highlightAttraction(marker, map, key) {
+  //         let attSelector = '.attraction-info[data-attractionid=' + key + ']';
+  //         marker.addListener('mouseover', function() {
+  //           console.log("mouseover the marker of ", key);
+
+  //           $(attSelector).attr('style', 'background-color: #cce6ff;');
+  //         });
+  //         marker.addListener('mouseout', function() {
+  //           $(attSelector).removeAttr('style', 'background-color: #cce6ff;');
+  //         });
+  //       }
+
+  //     } // end of if statement
+
+  //   }); // end of ajax get method
+  // }
+
+  // No need to use the following to call initMap since it's called in the src which contains my key
+  // google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM">
+</script>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/edit_trip.js"></script>
+<script type="text/javascript">
+  $('#btn-toggle-photo').on('click', function(){
+    $('.attraction-photo > img').toggle();    
+  });
+
+  //  Opt-in functionality
+  // For performance reasons, the Tooltip and Popover data-apis are opt-in, meaning you must initialize them yourself.
+  // One way to initialize all popovers on a page would be to select them by their data-toggle attribute:
+  $(function () {
+    $('[data-toggle="popover"]').popover({
+      container: 'body'
+    })
+  })
+
+
+
+</script>
+
+{% endblock %}

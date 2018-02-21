@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<!-- put extra CSS/JS here -->
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<style>
+  /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+  #map {
+    height: 550px;
+    width: 100%;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .btn-hidden-input-field {
+    background-color: transparent; 
+    border: 1px solid;
+    border-color: transparent;
+  }
+
+  li.attraction-info {
+    list-style-type:none;
+  }
+
+  .btn-del-minus-mark {
+    font-size: 10px;
+  }
+
+  .marker-container {
+      display: inline-block;
+      position: relative;
+      text-align: center;
+      color: black;
+  }
+
+  .marker-digit {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h3>Hi, {{ session["user_name"] }}</h3>
+
+<div class='row'>  <!-- First row -->
+  <div class='col-xs-8'>
+    <div id='trip-info' data-tripid='{{ trip.trip_id }}'>
+      <h4>You're editing:
+      <input class='btn-hidden-input-field' type='text' value='{{ trip.name }}'>
+      </h4>
+    </div>
+  </div>
+  <div class='col-xs-4'>
+    <a href='/trip/{{ trip.trip_id }}'><button id='btn-add-new-dest' class='btn btn-default btn-xs'> Finish </button></a>
+    <a href='/new-trip/{{ trip.trip_id }}'><button id='btn-add-new-dest' class='btn btn-default btn-xs'> + New City</button></a>
+  </div>
+</div>  <!-- First row ends -->
+
+{% set label = {'digit': 1} %}
+{% for dest in trip.dests|sort(attribute='created_at') %}
+<div class='dest-info panel panel-default' data-destid='{{ dest.dest_id }}'>
+  <!-- non-breaking space &nbsp; -->
+  &nbsp;
+  <!-- button for deleting -->
+  <button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-dest' data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}' data-tripid='{{ trip.trip_id }}'> - </button>
+  <!-- button for deleting ends -->
+  <input class='btn-hidden-input-field' type='text' value='{{ dest.name }}'>
+      
+<ul class='attraction-list' data-destid='{{ dest.dest_id }}'>
+  {% for att in dest.attractions|sort(attribute='created_at') %}
+  <li class='attraction-info' data-attractionid='{{ att.attraction_id }}'>
+    <!-- button for deleting -->
+    <button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-attraction' data-attractionid='{{ att.attraction_id }}' data-attractionname='{{ att.name }}'> - </button>
+    <!-- button for deleting ends -->
+    <!-- google marker img -->
+    <div class='marker-container'>
+      <img src='/static/red_marker.png' alt='{{ att.name }}' style='width:27px;'>
+      <div class='marker-digit'>{{ label.digit }} </div>
+      {% if label.update({'digit': (label.digit + 1)}) %}  {% endif %}
+    </div>
+    <!-- google marker img ends -->
+    <input class='btn-hidden-input-field' type='text' value='{{ att.name }}' size='35'>
+      {% for note in att.notes|sort(attribute='created_at') %}
+      <div>
+        <ul>
+          <li class='note-info' data-noteid='{{ note.note_id }}'>
+            <input class='btn-hidden-input-field' type='text' value='{{ note.content }}' size='60'>
+          </li>
+        </ul>
+      </div>
+
+      {% endfor %}<!-- end for att.notes -->
+  </li>
+  {% endfor %}<!-- end for dest.attractions -->
+
+  <div class='populated-dests'> <!-- newly populated dest -->
+  </div> <!-- newly populated dest ends here -->
+  <li class='add-new-attraction' style='list-style-type:none;'>
+    <div>
+      <!-- Button trigger modal -->
+      <button class='btn btn-default btn-xs btn-add-new-attraction' data-toggle="modal" data-target="#addNewAttractionModal" data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}' style='display: none;'> + Add Another Attraction </button>
+    </div>
+  </li>
+
+</ul>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addNewAttractionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add a New Attraction</h4>
+      </div>
+      <div class="modal-body">
+        <ul id='add-attraction'>
+          <li id='li-attraction'>
+            <div>
+              <input type='text' id='add-attraction-name' name='attraction-name' placeholder='new attraction'>
+            </div>
+            <div id='note-form'>
+              <div>
+                <textarea class='add-note' name='note-content[]' placeholder='add some notes...' rows='3' cols='30'></textarea>
+              </div>
+            </div>
+            <div>
+              <button id='btn-append-note' class='btn btn-default btn-xs'> + More Notes </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="btn-save-new-attraction" type="submit" class="btn btn-primary" data-dismiss="modal">Save and Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endfor %} <!-- end for trip.dests -->
+
+
+{% endblock %} <!-- end for content block -->
+
+
+<!-- google map goes here -->
+{% block map %}
+
+<!-- google map div -->
+<div id="map"></div>
+
+
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM">
+</script>
+
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/edit_trip.js"></script>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GoTrip!</title>
+  <link rel="stylesheet" 
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="/static/styles.css"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  {% block head %}
+      <!-- put extra CSS/JS here -->
+  {% endblock %}
+
+</head>
+<body>
+  <!-- Static navbar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header col-xs-4">
+          <a href="https://www.google.com"><img class="navbar-brand" src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Google-favicon-2015.png" height="20"></a>
+          {% if "user_id" not in session %}
+          <a class="navbar-brand" href="/">GoTrip!</a>
+          {% else %}
+          <a class="navbar-brand" href="/dashboard/{{ session['user_id'] }}">GoTrip!</a>
+          {% endif %}
+          <p class="navbar-text">
+            {% for flash in get_flashed_messages() %}
+              {{ flash }}
+            {% endfor %}
+          </p>
+
+      </div>
+      <div id="navbar" class="col-xs-8">
+        <ul class="nav navbar-nav navbar-right">
+          {% if "user_id" in session %}
+          <li><a href="/edit-trip/1">Edit</a></li>
+          <li><a href="/trip/1">Trip</a></li>
+          {% endif %}
+          <!-- Check if the user logged in or not -->
+          {% if "user_id" not in session %}
+          <li><a href="/">Register</a></li>
+          <li><a href="/login">Log In</a></li>
+          {% else %}
+          <li><a href="/settings">Settings</a></li>
+          <li><a href="/logout">Log Out</a></li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div>
+    <div class="container-fluid">
+      <!-- Left side section for trip info -->
+      <section class="col-xs-12 col-md-6 col-lg-6">
+        {% block content %}
+
+        {% endblock %}
+      </section>
+      <!-- Right side section for goole map -->
+      <section class="col-xs-12 col-md-6 col-lg-6">
+        {% block map %}
+        <br>
+        ######### Under construction ############<br>
+        <br>
+        (Google map goes here)
+        <br>
+        {% endblock %}
+      </section>
+    </div>
+  </div>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  {% block footer %}
+      <!-- put extra js here -->
+  {% endblock %}
+</body>
+</html>

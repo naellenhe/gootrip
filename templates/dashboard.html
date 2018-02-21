@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Hi, {{ session["user_name"] }}</h3>
+
+<div class='col-xs-12 col-md-8'>
+
+  <div class='panel panel-default panel-body'>
+    <form action='/new-trip-id' method='POST'>
+      <div>
+        Create a new trip:
+        <input id='new-trip' type='text' name='trip' required>
+        <input class='btn btn-default btn-xs' type='submit' value='create'>
+      </div>
+    </form>
+  </div>
+
+
+  <div class='panel panel-default'>
+    <div class='panel-heading'>
+      <h3 class='panel-title'>Your trips:</h3>
+    </div>
+    <ul class='list-group'>
+      {% for trip in trips %} <!-- start for trips -->
+      <li class='list-group-item trip-info' data-tripid='{{ trip.trip_id }}'>
+        <button class='btn btn-default btn-xs btn-delete-trip' data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>
+          Delete
+        </button>
+        <a href='/edit-trip/{{ trip.trip_id }}'>
+          <button class='btn btn-default btn-xs'>Edit</button></a>
+<!--         <a href='/new-trip/{{ trip.trip_id }}'>
+          <button class='btn btn-default btn-xs'>Add</button></a> -->
+        <a href='/trip/{{ trip.trip_id }}'> {{ trip.name }} </a>
+      </li>
+      {% endfor %} <!-- end for trips -->
+    </ul>
+  </div>
+
+</div>
+
+<script>
+
+//Delete a trip
+function deleteTrip(evt){
+  let target = $(event.target);
+  let tripId = target.data('tripid');
+  let tripName = target.data('tripname');
+  let tripSelector = '.trip-info[data-tripid=' + tripId + ']';
+  let msg = 'Do you want to delete your trip: ' + tripName + '?';
+  let confirmResponse = confirm(msg);
+  if (confirmResponse == true){
+    $(tripSelector).remove();
+
+    //Use ajax to delete trip data in the database
+    $.post("/delete-trip", {'trip_id':tripId}, function(results){
+      console.log(results);
+    });
+  }
+}
+
+$(".btn-delete-trip").on('click', deleteTrip);
+
+</script>
+
+
+{% endblock %}
