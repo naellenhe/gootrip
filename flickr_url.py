@@ -1,4 +1,5 @@
 import flickrapi
+import random
 
 api_key = u'500072adc6bc7a46dbf6ffcefc488a94'
 api_secret = u'c483bc161f6343be'
@@ -41,7 +42,7 @@ def get_flickr_photo_url(attraction, lat, lng):
         urls.append(url.format(farm=farm, server=server, id=user_id, secret=secret))
 
     if urls != []:
-        return urls[0]
+        return random.choice(urls)
 
     else:
         return ""

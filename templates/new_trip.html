@@ -48,7 +48,25 @@
 </style>
 {% endblock %}
 
+{% block dropdown %}
+<li role="presentation" class="dropdown">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    Trip <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+    {% for trip in trips %}
+    <li><a href="/trip/{{ trip.trip_id }}">{{ trip.name }}</a></li>
+    {% endfor %}
+    <li role="separator" class="divider"></li>
+    <li><a href="/dashboard/{{ session['user_id'] }}">Dashboard</a></li>
+  </ul>
+</li>
+{% endblock %}
+
+
 {% block content %}
+<div class="container-fluid">
+<section class="col-xs-12 col-md-6 col-lg-6">
 <h3>Hi, {{ session["user_name"] }} </h3>
 
 <div class='row'>
@@ -68,7 +86,7 @@
 <div id='new-dest-from-form' class='dest-info panel panel-default'>
   <!-- non-breaking space &nbsp; -->
   &nbsp;
-  <input type='text' id='add-dest-name' name='dest-name' placeholder='Desination/City' style='background-color: transparent; border: 1px solid grey'>
+  <input type='text' id='add-dest-name' name='dest-name' placeholder='Destination/City' style='background-color: transparent; border: 1px solid grey'>
   <button class="btn btn-default btn-xs" id='btn-save-dest-name'>Save</button>
 
   <div>
@@ -100,6 +118,9 @@
   <button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-dest' data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}' data-tripid='{{ trip.trip_id }}'> - </button>
   <!-- button for deleting ends -->
   <input class='btn-hidden-input-field' type='text' value='{{ dest.name }}'>
+  <div>
+    <div class='recommeded-atts' data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}'>Recommendations goes here</div>
+  </div>
       
 <ul class='attraction-list' data-destid='{{ dest.dest_id }}'>
   {% for att in dest.attractions|sort(attribute='created_at') %}
@@ -172,6 +193,11 @@
   </div>
 </div>
 
+</section>
+<section class="col-xs-12 col-md-6 col-lg-6">
+  <div id="map"></div>
+</section>
+</div>
 
 
 <script>
@@ -196,10 +222,13 @@
 
         console.log('new destination is added. dest_id:', results.dest_id);
 
+        getRecommendedAttraction(results.dest_id, results.name);
+
         let destHtml = "<button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-dest' data-destid='" + 
                         results.dest_id + "' data-destname='"+ results.name + "' data-tripid='"+
                         $('#trip-info').data('tripid') + "'> - </button>" + 
-                        "<input class='btn-hidden-input-field' type='text' value='" + results.name + "'>";
+                        "<input class='btn-hidden-input-field' type='text' value='" + results.name + "'>" +
+                        "<div><div class='recommeded-atts' data-destid='"+ results.dest_id + "' data-destname='"+ results.name + "'>Recommendations goes here</div></div>";
 
         $("#add-dest-name").replaceWith(destHtml);
         console.log(destHtml);
@@ -286,23 +315,15 @@
 
 </script>
 
-{% endblock %} <!-- end for content block -->
-
-<!-- google map goes here -->
-{% block map %}
-<div id="map"></div>
-
 
 {% endblock %}
 
 {% block footer %}
-<script
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM&libraries=places">
-</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM&libraries=places"></script>
 
-<!-- <script src="/static/get_geocode.js"></script>
+<!-- <script src="/static/js/get_geocode.js"></script>
  -->
-<script src="/static/edit_trip.js"></script>
+<script src="/static/js/edit_trip.js"></script>
 <script>
   placeAutocomplete('add-dest-name');
 </script>

@@ -20,12 +20,16 @@ def get_wiki_description(title):
 
     url_search = "https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts&exsentences=5&exintro=1&explaintext=1&exsectionformat=plain&titles={}".format(title)
 
-    reponse = requests.get(url_search).json()
-    pages = reponse['query']['pages'].values()
+    response = requests.get(url_search).json()
+    pages = response['query']['pages'].values()
     page = pages[0]
 
-    extract = page['extract']
-    extract = extract.encode('utf-8')
+    if 'extract' in page:
+        extract = page['extract']
+        extract = extract.encode('utf-8')
+
+    else:
+        extract = ''
 
     return extract
 
@@ -46,6 +50,6 @@ def get_wiki_response(title):
     title = titlecase(title).encode('utf-8')
 
     url_search = "https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts&exsentences=5&exintro=1&explaintext=1&exsectionformat=plain&titles={}".format(title)
-    reponse = requests.get(url_search).json()
+    response = requests.get(url_search).json()
 
-    return reponse
+    return response

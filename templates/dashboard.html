@@ -1,42 +1,129 @@
 {% extends 'base.html' %}
+{% block head %}
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<style>
+  /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+  #map {
+    height: 100%; 
+    width: 100%; 
+    position: absolute; 
+    left: 0; 
+    z-index: 0;
+  }
+  section {
+    position: relative; 
+    z-index: 1;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-title {
+    color : white;
+  }
+
+  .panel-my-trips {
+      border-color: #BCE784;
+  }
+
+  .panel-my-trips >.panel-heading {
+      color: #525174;
+      background-color: #BCE784;
+      border-color: #BCE784;
+  }
+
+  .list-group-item {
+      border: 1px solid #BCE784;
+  }
+
+  .container-fluid {
+    margin: 0;
+  }
+
+  .form-control {
+    background-color: #f4f5f6;
+  }
+
+</style>
+<!-- set google map as background -->
+<div id="map"></div>
+{% endblock %}
+
+{% block dropdown %}
+<li role="presentation" class="dropdown">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    <span class="nav-title">Trip<span><span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+    {% for trip in trips|sort(attribute='created_at') %}
+    <li><a href="/trip/{{ trip.trip_id }}">{{ trip.name }}</a></li>
+    {% endfor %}
+    <li role="separator" class="divider"></li>
+    <li><a href="/dashboard/{{ session['user_id'] }}">Dashboard</a></li>
+  </ul>
+</li>
+{% endblock %}
+
 {% block content %}
+  <div class="container-fluid">
+    <!-- Left side section for trip info -->
+    <section class="col-xs-12 col-md-4 col-lg-4">
+      <h3>Hi, {{ session["user_name"] }}</h3>
 
-<h3>Hi, {{ session["user_name"] }}</h3>
+      <div class='col-xs-12 col-md-12'>
+        <div class='panel panel-success panel-body'>
+          <form action='/new-trip-id' method='POST'>
+            <div class="input-group">
+              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Creat a new trip' required>
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"> + </button>
+              </span>
+            </div>
+          </form>
+        </div>
 
-<div class='col-xs-12 col-md-8'>
 
-  <div class='panel panel-default panel-body'>
-    <form action='/new-trip-id' method='POST'>
-      <div>
-        Create a new trip:
-        <input id='new-trip' type='text' name='trip' required>
-        <input class='btn btn-default btn-xs' type='submit' value='create'>
+        <div class='panel panel-success panel-my-trips'>
+          <div class='panel-heading'>
+            <h3 class='panel-title'>Your trips:</h3>
+          </div>
+<!--           <form class='panel-heading' action='/new-trip-id' method='POST'>
+            <div class="input-group">
+              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Creat a new trip' required>
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"> + </button>
+              </span>
+            </div>
+          </form> -->
+
+          <ul class='list-group'>
+            {% for trip in trips|sort(attribute='created_at') %} <!-- start for trips -->
+            <li class='list-group-item trip-info' data-tripid='{{ trip.trip_id }}'>
+              <button class='btn btn-default btn-xs btn-delete-trip' data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>
+                Delete
+              </button>
+              <a href='/edit-trip/{{ trip.trip_id }}'>
+                <button class='btn btn-default btn-xs'>Edit</button></a>
+      <!--         <a href='/new-trip/{{ trip.trip_id }}'>
+                <button class='btn btn-default btn-xs'>Add</button></a> -->
+              <a href='/trip/{{ trip.trip_id }}'> {{ trip.name }} </a>
+              <span class="badge"></span>
+            </li>
+            {% endfor %} <!-- end for trips -->
+          </ul>
+        </div>
+
       </div>
-    </form>
+    </section>
+
+
+
   </div>
-
-
-  <div class='panel panel-default'>
-    <div class='panel-heading'>
-      <h3 class='panel-title'>Your trips:</h3>
-    </div>
-    <ul class='list-group'>
-      {% for trip in trips %} <!-- start for trips -->
-      <li class='list-group-item trip-info' data-tripid='{{ trip.trip_id }}'>
-        <button class='btn btn-default btn-xs btn-delete-trip' data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>
-          Delete
-        </button>
-        <a href='/edit-trip/{{ trip.trip_id }}'>
-          <button class='btn btn-default btn-xs'>Edit</button></a>
-<!--         <a href='/new-trip/{{ trip.trip_id }}'>
-          <button class='btn btn-default btn-xs'>Add</button></a> -->
-        <a href='/trip/{{ trip.trip_id }}'> {{ trip.name }} </a>
-      </li>
-      {% endfor %} <!-- end for trips -->
-    </ul>
-  </div>
-
-</div>
 
 <script>
 
@@ -61,6 +148,124 @@ function deleteTrip(evt){
 $(".btn-delete-trip").on('click', deleteTrip);
 
 </script>
+
+
+<script>
+///////////////
+// basic map //
+///////////////
+  function initMap() {
+    let map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 9,
+      center: {lat: 37.6653831, lng: -122.4194155}
+    });
+
+    let infoWindow = new google.maps.InfoWindow({
+        width: 150
+    });
+
+    let bounds  = new google.maps.LatLngBounds();
+
+    // Retrieving the information with AJAX
+    // let tripId = $("#trip-info").data('tripid');
+    $.get('/trips_dests.json', function (dests) {
+        // JSON looks like:
+        // {
+        //   "21": {
+        //     "destLat": "25.0329694", 
+        //     "destLng": "121.56541770000", 
+        //     "destName": "Taipei City"
+        //   }, 
+        //   "22": {
+        //     "destLat": "25.0329694", 
+        //     "destLng": "121.56541770000", 
+        //     "destName": "Taipei City"
+        //   }, 
+        // }
+      let count = Object.keys(dests).length;
+
+      if (count !== 0) {
+        let dest, marker, content, loc;
+
+        for (let key in dests) {
+            dest = dests[key];
+
+            if (dest.destLat && dest.destLng){
+              // Define the marker
+              marker_position = new google.maps.LatLng(
+                                        dest.destLat,
+                                        dest.destLng);
+
+              marker = new google.maps.Marker({
+                  position: marker_position,
+                  map: map,
+                  title: 'Destination name: ' + dest.destName,
+                  // place means a business, point of interest or geographic location.
+                  // The info window will contain information about the place and an option for the user to save it.
+                  place: {
+                    location: marker_position,
+                    query: dest.destName,
+                  },
+                  icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 18,
+                    strokeWeight : 2,
+                    strokeColor : "#FA7921",
+                    rotation : 30,
+                    fillOpacity : 1,
+                    fillColor : "#FA7921",
+
+                  },
+                  label: {
+                    text: dest.destName,
+                    color: "#525174",
+                    fontSize: "10px",
+                  },
+              });
+
+              // Everytime a new marker is added, append to bounds
+              loc = new google.maps.LatLng(
+                                marker.position.lat(),
+                                marker.position.lng()
+                              );
+              bounds.extend(loc);
+
+              // Content for InfoWindow.
+              content = "Destination: " + dest.destName
+
+              // Inside the loop we call bindInfoWindow passing it the marker,
+              // map, infoWindow, and contentString
+              bindInfoWindow(marker, map, infoWindow, content);
+
+            }
+        }
+
+        map.fitBounds(bounds);       // auto-zoom
+        map.panToBounds(bounds);     // auto-center
+
+        // Opens the InfoWindow when marker is clicked.
+        function bindInfoWindow(marker, map, infoWindow, content) {
+          marker.addListener('click', function() {
+            console.log("the marker is clicked!", content);
+            infoWindow.close();
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+          });
+        }
+
+      } // end of if statement
+
+    }); // end of ajax get method
+  }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM&callback=initMap"></script>
+
+{% endblock %}
+
+
+
+{% block footer %}
 
 
 {% endblock %}

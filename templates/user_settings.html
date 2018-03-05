@@ -1,7 +1,59 @@
 {% extends 'base.html' %}
+
+
+{% block head %}
+<style type="text/css">
+  .panel {
+      background-color: #ddd;
+  }
+
+
+</style>
+{% endblock %}
+
+
+
+{% block dropdown %}
+<li role="presentation" class="dropdown">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    Trip <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+    {% for trip in trips %}
+    <li><a href="/trip/{{ trip.trip_id }}">{{ trip.name }}</a></li>
+    {% endfor %}
+
+    <li role="separator" class="divider"></li>
+    <li><a href="/dashboard/{{ session['user_id'] }}">Dashboard</a></li>
+  </ul>
+</li>
+{% endblock %}
+
+
 {% block content %}
-  <div>
-  <h3>Settings</h3>
+<div class="container-fluid">
+  <!-- Left side section for trip info -->
+  <div class="row">
+    <section class="col-xs-6 col-xs-offset-3">
+
+      <div><h2>Account Settings</h2></div>
+      <div id="root"></div>
+      <div><a class="btn" href="/logout">Log Out</a></div>
+
+
+    </section>
   </div>
+</div>
+
+
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="http://unpkg.com/babel-standalone"></script>
+<script src="/static/js/user_settings.jsx" type="text/jsx"></script>
+<script type="text/javascript">
+// set a global variable user_id for react to use.
+let user_id = {{ session['user_id'] }};
+</script>
 
 {% endblock %}
+

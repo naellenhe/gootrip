@@ -1,0 +1,57 @@
+1|Golden Gate Bridge
+1|Palace of Fine Arts
+1|Alcatraz Island
+1|Fisherman’s Wharf
+1|Pier 39
+1|Ghirardelli Square
+1|Mission District
+1|Lombard Street
+1|Coit Tower
+1|Cable car
+1|Chinatown
+1|The Castro
+1|Haight-Ashbury
+1|Ferry Building
+1|Japantown
+1|Napa Valley
+1|Bay Bridge
+1|Fort Mason
+1|Fort Point
+1|Painted ladies
+1|Union Square
+2|Muir Woods
+2|Cliff House
+2|Sutro Baths
+2|Treasure Island
+2|San Francisco Giant
+2|Lands End
+2|Angel Island
+2|Alamere Falls
+2|The Presidio
+2|Bernal Heights Summit
+3|San Francisco Museum of Modern Art
+3|Grace Cathedral
+3|Jack Kerouac Alley
+3|Asian Art Museum
+3|Aquarium of the Bay
+3|Cable Car Museum
+3|California Academy of Sciences
+3|Cartoon Art Museum
+3|de Young Museum
+3|Walt Disney Family Museum
+3|Contemporary Jewish Museum
+3|Musée Mécanique
+3|American Conservatory Theater
+4|Alamo Square
+4|Dolores Park
+4|Golden Gate Park
+4|Yerba Buena Gardens
+4|Twin Peaks
+4|Ocean Beach
+4|San Francisco Zoo
+4|Crissy Field
+5|Stonestown Galleria
+5|Westfield San Francisco Centre
+5|Metreon
+
+

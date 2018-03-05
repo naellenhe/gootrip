@@ -2,27 +2,61 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>GoTrip!</title>
+  <title>GooTrip!</title>
   <link rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <!-- <link rel="stylesheet" href="/static/styles.css"> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <!-- jQuery autocomplete UI -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style type="text/css">
 
-  {% block head %}
-      <!-- put extra CSS/JS here -->
-  {% endblock %}
+  html, body {
+    font-family: jaf-bernino-sans,Helvetica,Arial,sans-serif;
+  }
 
+  .navbar-default {
+    background-color: #F6511D;
+    border-color: #F6511D;
+  }
+
+
+  .navbar {
+    border-radius: 0px;
+  }
+
+
+  .navbar-default .navbar-brand {
+    font-size: 25px;
+    color : white;
+  }
+
+  .btn-navbar-custom {
+    color: #fff;
+    background-color: #fff0;
+    border-color: #fff;
+    width: 100px;
+  }
+
+  </style>
+
+{% block head %}
+    <!-- put extra CSS/JS here -->
+{% endblock %}
 </head>
+
 <body>
   <!-- Static navbar -->
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header col-xs-4">
-          <a href="https://www.google.com"><img class="navbar-brand" src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Google-favicon-2015.png" height="20"></a>
           {% if "user_id" not in session %}
-          <a class="navbar-brand" href="/">GoTrip!</a>
+          <a class="navbar-brand" href="/"><span>GOOTRIP</span></a>
           {% else %}
-          <a class="navbar-brand" href="/dashboard/{{ session['user_id'] }}">GoTrip!</a>
+          <a class="navbar-brand" href="/dashboard/{{ session['user_id'] }}"><span>GOOTRIP</span></a>
           {% endif %}
           <p class="navbar-text">
             {% for flash in get_flashed_messages() %}
@@ -33,49 +67,64 @@
       </div>
       <div id="navbar" class="col-xs-8">
         <ul class="nav navbar-nav navbar-right">
-          {% if "user_id" in session %}
-          <li><a href="/edit-trip/1">Edit</a></li>
-          <li><a href="/trip/1">Trip</a></li>
-          {% endif %}
+          {% block dropdown %}
+
+          {% endblock %}
           <!-- Check if the user logged in or not -->
           {% if "user_id" not in session %}
-          <li><a href="/">Register</a></li>
-          <li><a href="/login">Log In</a></li>
+          <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/">Register</a></div></li>
+          <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/login">Log In</a></div></li>
           {% else %}
-          <li><a href="/settings">Settings</a></li>
-          <li><a href="/logout">Log Out</a></li>
+          <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/settings">Settings</a></div></li>
+<!--           <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/logout">Log Out</a></div></li> -->
           {% endif %}
-
+          {% if "user_id" in session %}
+          <form action='/search' method="POST" class="ui-widget navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" id='search-bar' class="form-control" name="destination-keyword" placeholder="Destination">
+            </div>
+            <!-- search bar icon -->
+            <button type="submit" class="btn btn-default "><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+          </form>
+          {% endif %}
         </ul>
       </div>
     </div>
   </nav>
 
+{% block content %}
+
   <div>
     <div class="container-fluid">
       <!-- Left side section for trip info -->
       <section class="col-xs-12 col-md-6 col-lg-6">
-        {% block content %}
 
-        {% endblock %}
       </section>
+
       <!-- Right side section for goole map -->
       <section class="col-xs-12 col-md-6 col-lg-6">
-        {% block map %}
-        <br>
-        ######### Under construction ############<br>
-        <br>
-        (Google map goes here)
-        <br>
-        {% endblock %}
+
       </section>
-    </div>
+        </div>
   </div>
 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  {% block footer %}
-      <!-- put extra js here -->
-  {% endblock %}
+{% endblock %}
+
+
+  <script>
+  $( function() {
+    $.get('/get-all-dests', function(response){
+      let availableTags = response.dests;
+      $( "#search-bar" ).autocomplete({
+        source: availableTags
+      });
+    })
+  });
+  </script>
+
+
+{% block footer %}
+    <!-- put extra js here -->
+{% endblock %}
 </body>
 </html>

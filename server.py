@@ -6,7 +6,8 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Trip, Dest, TripDest, Attraction, Note
-from model import set_val_trip_id, set_val_dest_id, set_val_trip_dest_id, set_val_attraction_id, set_val_note_id
+from model import search_attractions, recommend_attractions, convert_url_to_html_link
+from model import set_val_user_id, set_val_trip_id, set_val_dest_id, set_val_trip_dest_id, set_val_attraction_id, set_val_note_id
 
 from passlib.hash import argon2
 
@@ -41,6 +42,8 @@ def index():
 def register_process():
     """Process login."""
 
+    set_val_user_id()
+
     # Get form variables
     name = request.form["name"].strip()
     email = request.form["email"].strip()
@@ -62,6 +65,7 @@ def register_process():
         zipcode = None
 
     # instantiate a new user
+
     new_user = User(name=name, email=email, password=hashed_password, birthyear=birthyear, zipcode=zipcode)
 
     db.session.add(new_user)
@@ -105,7 +109,7 @@ def login_process():
     session["user_id"] = user.user_id
     session["user_name"] = user.name
 
-    flash("Logged in")
+    flash("Welcome Back!")
     return redirect("/dashboard/{}".format(user.user_id))
 
 
@@ -119,11 +123,120 @@ def logout():
     return redirect("/")
 
 
+@app.route("/user.json", methods=['POST'])
+def get_user_profile():
+    """Get user profile info."""
+
+    #request shortcut for JSON
+    user_id = request.get_json().get('user_id')
+    print request.get_json()
+
+    user = User.query.get(user_id)
+
+    return jsonify({'name': user.name,
+                    'email': user.email,
+                    'password': '',
+                    'birthyear': user.birthyear if user.birthyear else '',
+                    'zipcode': user.zipcode if user.zipcode else ''})
+
+
 @app.route('/settings', methods=['GET'])
 def settings():
     """User's settings."""
 
-    return render_template("user_settings.html")
+    if "user_id" not in session:
+        return redirect('/')
+
+    user_id = session["user_id"]
+
+    trips = Trip.query.filter_by(user_id=user_id).all()
+
+    return render_template("user_settings.html", trips=trips)
+
+
+@app.route("/update_user_profile.json", methods=['POST'])
+def update_user_profile():
+    """Update user profile"""
+
+    print "update_user_profile:", request.get_json()
+
+    user_id = request.get_json().get('user_id')
+    new_name = request.get_json().get("name").strip()
+    new_email = request.get_json().get("email").strip()
+    new_password = request.get_json().get("password")
+    new_birthyear = request.get_json().get("birthyear")
+    new_zipcode = request.get_json().get("zipcode")
+
+    #get user from database
+    user = User.query.get(user_id)
+
+    to_update = False
+    if user.name != new_name and (new_name != ''):
+        user.name = new_name
+        to_update = True
+
+    if user.email != new_email and (new_email != ''):
+        user.email = new_email
+        to_update = True
+
+    if user.birthyear != new_birthyear and (new_birthyear != ''):
+        user.birthyear = new_birthyear
+        to_update = True
+
+    if user.zipcode != new_zipcode and (new_zipcode != ''):
+        user.zipcode = new_zipcode
+        to_update = True
+
+    # only updating when the password is not empty string and not same as current password
+    if new_password and not argon2.verify(new_password, user.password):
+        user.password = argon2.hash(new_password)
+        to_update = True
+
+    if to_update:
+        db.session.commit()
+
+    return jsonify({"msg": "successful"})
+
+
+
+@app.route('/get-all-dests', methods=['GET'])
+def get_all_dests():
+    """Get list of all destinations (and attractions.)"""
+
+    dests = db.session.query(Dest.name).all()
+    dests = [dest[0] for dest in dests]
+    dests = list(set(dests))
+
+    # json format: {'dests': [dest1, dest2, ...]}
+    return jsonify(dests=dests)
+
+
+@app.route('/search', methods=['POST'])
+def search_attraction_by_destination():
+    """Search attractions by destination."""
+
+    destination = request.form.get("destination-keyword")
+    attractions_found = search_attractions(destination)
+
+    return render_template("search_result.html", destination=destination, attractions=attractions_found)
+
+
+@app.route('/get-recommendation', methods=['POST'])
+def get_recommended_atts():
+    """Retrun recommendation for attractions by the given dest name"""
+
+    dest_id = request.form.get("dest_id")
+    dest_name = request.form.get("dest_name")
+
+    target_dest = db.session.query(Dest.name, Attraction.name).join(Attraction).filter(Dest.dest_id == dest_id).all()
+    #target_dest returns: [(u'Taipei City', u'Ximen'), (u'Taipei City', u'Bitan Scenic Area'), (u'Taipei City', u'Elephant Mountain'), (u'Taipei City', u'Raohe Street Night Market'), (u'Taipei City', u'Tamsui station'), (u'Taipei City', u'Shilin Night Market'), (u'Taipei City', u'Songshan Cultural')]
+
+    existing_atts = [dest_att[1] for dest_att in target_dest]
+    #existing_atts returns: [u'Ximen', u'Bitan Scenic Area', u'Elephant Mountain', u'Raohe Street Night Market', u'Tamsui station', u'Shilin Night Market', u'Songshan Cultural']
+
+    recommended_level, recommended_atts = recommend_attractions(dest_name, existing_atts)
+
+    return jsonify(recommended_level=recommended_level, recommended_atts=recommended_atts)
 
 
 @app.route('/dashboard/<int:user_id>', methods=['GET'])
@@ -136,6 +249,7 @@ def show_dashboard(user_id):
 
         ####Need to fix to get the most recent trip to show on dashboard###
         trips = Trip.query.filter_by(user_id=user_id).all()
+
         return render_template("dashboard.html", trips=trips)
     else:
         return redirect("/")
@@ -179,6 +293,8 @@ def make_new_trip_form(trip_id):
 
     user_id = session["user_id"]
 
+    trips = Trip.query.filter_by(user_id=user_id).all()
+
     # trip = Trip.query.filter_by(trip_id=trip_id, user_id=user_id).first()
     # Eagerly loading by using join will be more efficient
     trip_query = Trip.query.options(db.joinedload('dests').joinedload('attractions').joinedload('notes'))
@@ -190,7 +306,7 @@ def make_new_trip_form(trip_id):
 
     print "##### Developer msg #### Adding to:", trip
 
-    return render_template("new_trip.html", trip=trip)
+    return render_template("new_trip.html", trip=trip, trips=trips)
 
 
 @app.route("/trip/<int:trip_id>", methods=['GET'])
@@ -202,10 +318,38 @@ def trip_detail(trip_id):
 
     user_id = session["user_id"]
 
+    trips = Trip.query.filter_by(user_id=user_id).all()
+
     # trip = Trip.query.filter_by(trip_id=trip_id, user_id=user_id).first()
     # Eagerly loading by using join will be more efficient
     trip_query = Trip.query.options(db.joinedload('dests').joinedload('attractions').joinedload('notes'))
     trip = trip_query.filter_by(trip_id=trip_id, user_id=user_id).first()
+
+    trip_tree = {
+        "trip_id": trip.trip_id,
+        "name": trip.name,
+        "created_at": trip.created_at,
+        "dests": [
+            {
+                "dest_id": dest.dest_id,
+                "name": dest.name,
+                "created_at": dest.created_at,
+                "attractions": [
+                    {
+                        "attraction_id": attraction.attraction_id,
+                        "name": attraction.name,
+                        "created_at": attraction.created_at,
+                        "description": attraction.description,
+                        "photo": attraction.photo,
+                        "notes": [
+                            {
+                                'note_id': note.note_id,
+                                'created_at' : note.created_at,
+                                'content': convert_url_to_html_link(note.content),
+                            } for note in attraction.notes]
+                    } for attraction in dest.attractions]
+            } for dest in trip.dests]
+    }
 
     # if trip is None, go back to homepage
     if not trip:
@@ -213,7 +357,7 @@ def trip_detail(trip_id):
 
     # user = User.query.get(user_id)
 
-    return render_template("trip_details.html", trip=trip)
+    return render_template("trip_details.html", trip=trip_tree, trips=trips)
 
 
 @app.route('/edit-trip/<int:trip_id>', methods=['GET'])
@@ -224,6 +368,8 @@ def edit_trip_form(trip_id):
         return redirect('/')
 
     user_id = session["user_id"]
+
+    trips = Trip.query.filter_by(user_id=user_id).all()
 
     # trip = Trip.query.filter_by(trip_id=trip_id, user_id=user_id).first()
     # Eagerly loading by using join will be more efficient
@@ -238,7 +384,7 @@ def edit_trip_form(trip_id):
 
     print "##### Developer msg #### Editing:", trip
 
-    return render_template("edit_trip.html", trip=trip)
+    return render_template("edit_trip.html", trip=trip, trips=trips)
 
 
 @app.route('/new-dest-id', methods=['POST'])
@@ -372,19 +518,29 @@ def add_attraction_coordinate():
     return "{} coordinate is successfully added to db.".format(attraction.name)
 
 
-# @app.route('/dest.json')
-# def dest_info():
-#     """JSON information about dests."""
+@app.route('/trips_dests.json', methods=['GET'])
+def dest_info():
+    """JSON information about all dests of all trips of the user."""
 
-#     dests = {
-#         dest.dest_id: {
-#             "destName": dest.name,
-#             "destLat": dest.dest_lat,
-#             "destLng": dest.dest_lng,
-#         }
-#         for dest in Dest.query.filter(Trip.trip_id == 1)}
+    all_dests = []
 
-#     return jsonify(dests)
+    user_id = session["user_id"]
+    user = User.query.get(user_id)
+    trips = user.trips
+
+    for trip in trips:
+        all_dests.extend(trip.dests)
+
+    dests = {
+        dest.dest_id: {
+            "destName": dest.name,
+            "destLat": dest.dest_lat,
+            "destLng": dest.dest_lng,
+        }
+        for dest in all_dests
+    }
+
+    return jsonify(dests)
 
 
 @app.route('/attractions.json', methods=['GET'])
@@ -400,20 +556,22 @@ def attraction_info():
 
     #Make a dictionary of all attractions for all the dests of a trip
     #These will be used as markers in google map
-    dest_ids = [dest.dest_id for dest in dests]
-    all_attractions = Attraction.query.filter(Attraction.dest_id.in_(dest_ids)).all()
+    # dest_ids = [dest.dest_id for dest in dests]
 
-    attractions = {
-        attraction.attraction_id: {
-            "attractionName": attraction.name,
-            "attractionLat": attraction.attraction_lat,
-            "attractionLng": attraction.attraction_lng,
+    dests_attractions = {}
+    for dest in dests:
+        all_attractions = Attraction.query.filter(Attraction.dest_id == (dest.dest_id)).all()
+        attractions = {
+            attraction.attraction_id: {
+                "attractionName": attraction.name,
+                "attractionLat": attraction.attraction_lat,
+                "attractionLng": attraction.attraction_lng,
+            }
+            for attraction in all_attractions
         }
-        for attraction in all_attractions
-    }
-        # import pdb; pdb.set_trace()
+        dests_attractions[dest.dest_id] = attractions
 
-    return jsonify(attractions)
+    return jsonify(dests_attractions)
 
 
 @app.route("/update-trip.json", methods=['POST'])
@@ -559,20 +717,26 @@ def trip_tree():
     trip = Trip.query.get(trip_id)
 
     trip_tree = {
-        "trip_id": trip_id,
+        "trip_id": trip.trip_id,
         "name": trip.name,
+        "created_at": trip.created_at,
         "dests": [
             {
                 "dest_id": dest.dest_id,
                 "name": dest.name,
+                "created_at": dest.created_at,
                 "attractions": [
                     {
                         "attraction_id": attraction.attraction_id,
                         "name": attraction.name,
-                        "note": [
+                        "created_at": attraction.created_at,
+                        "description": attraction.description,
+                        "photo": attraction.photo,
+                        "notes": [
                             {
                                 'note_id': note.note_id,
-                                'content': note.content
+                                'created_at' : note.created_at,
+                                'content': convert_url_to_html_link(note.content),
                             } for note in attraction.notes]
                     } for attraction in dest.attractions]
             } for dest in trip.dests]

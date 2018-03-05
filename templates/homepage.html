@@ -1,83 +1,191 @@
-{% extends 'base.html' %}
-{% block content %}
-    <div>
-    <h3>GoTrip!</h3>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GOOTRIP</title>
+  <link rel="stylesheet" 
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="/static/styles.css"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <!-- jQuery autocomplete UI -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style type="text/css">
 
-<div class="well spaced" style="width:60%;">
-{% if user_action == 'register' %}
-<h4>Register</h4>
+    body, html {
+        height: 100%;
+    }
 
-<form action="/register" method="POST">
-  <div class="form-group">
-    <label>
-        Name
-        <input type="text" name="name" class="form-control" required>
-    </label>
+
+    .navbar-default {
+      background-color: #F6511D;
+      border-color: #F6511D;
+    }
+
+    .navbar {
+      border-radius: 0px;
+    }
+
+    .bg { 
+        background-image: url("/static/pexels-photo-297642.jpeg");
+
+        /* Full height */
+        height: 100%; 
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .registration-form {
+      margin-top: 80px;
+    }
+
+    .form-title {
+      color : white;
+    }
+
+    .navbar-default .navbar-brand {
+      font-size: 25px;
+      color : white;
+    }
+
+    .btn-navbar-custom {
+      color: #fff;
+      background-color: #fff0;
+      border-color: #fff;
+      width: 100px;
+    }
+
+  </style>
+</head>
+
+
+<body>
+  <div class="bg">
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header col-xs-4">
+            {% if "user_id" not in session %}
+            <a class="navbar-brand" href="/"><span>GOOTRIP</span></a>
+            {% else %}
+            <a class="navbar-brand" href="/dashboard/{{ session['user_id'] }}"><span>GOOTRIP</span></a>
+            {% endif %}
+            <p class="navbar-text">
+              {% for flash in get_flashed_messages() %}
+                {{ flash }}
+              {% endfor %}
+            </p>
+
+        </div>
+        <div id="navbar" class="col-xs-8">
+          <ul class="nav navbar-nav navbar-right">
+            {% block dropdown %}
+
+            {% endblock %}
+            <!-- Check if the user logged in or not -->
+            {% if "user_id" not in session %}
+            <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/">Register</a></div></li>
+            <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/login">Log In</a></div></li>
+            {% else %}
+            <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/settings">Settings</a></div></li>
+            <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/logout">Log Out</a></div></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+
+  <div class="row registration-form">
+    <div class="col-xs-3 col-xs-offset-2">
+      {% if user_action == 'register' %}
+      <div>
+        <h1 class="form-title">REGISTER</h1>
+        <h4 class="form-title">FOR YOUR FANTASTIC TRIP</h4>
+      </div>
+
+      <form action="/register" method="POST">
+
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+              <input type="text" name="name" class="form-control" placeholder="Name" required>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+              <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="form-group form-group-lg">
+              <input type="text" name="birthyear" class="form-control" placeholder="Birthyear">
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group form-group-lg">
+              <input type="text" name="zipcode" class="form-control" placeholder="Zipcode">
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+              <input type="submit" value="Submit" class="btn btn-info btn-lg btn-block">
+             </div>
+          </div>
+        </div>
+      </form>
+
+
+  {% else %}
+
+      <div>
+        <h1 class="form-title">LOG IN</h1>
+        <h4 class="form-title">WELCOME BACK</h4>
+      </div>
+
+
+      <form action="/login" method="POST">
+
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+          </div>
+
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+              <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-lg">
+              <input type="submit" value="Submit" class="btn btn-info btn-lg btn-block">
+             </div>
+          </div>
+        </div>
+
+      </form>
+
+  {% endif %}
+
   </div>
-
-  <div class="form-group">
-    <label>
-        Email
-        <input type="email" name="email" class="form-control" required>
-    </label>
-  </div>
-
-  <div class="form-group">
-    <label>
-      Password
-      <input type="password" name="password" class="form-control" required>
-    </label>
-  </div>
-
-  <div class="form-group">
-    <label>
-      Birthyear
-      <input type="text" name="birthyear" class="form-control">
-    </label>
-  </div>
-
-  <div class="form-group">
-    <label>
-      Zipcode
-      <input type="text" name="zipcode" class="form-control">
-    </label>
-  </div>
-
-  <div class="form-group">
-    <input type="submit" value="Register" class="btn btn-danger">
-  </div>
-
-</form>
-
-{% else %}
-
-<h4>Log in</h4>
-
-<form action="/login" method="POST">
-
-  <div class="form-group">
-    <label>
-        Email
-        <input type="email" name="email" class="form-control" required>
-    </label>
-  </div>
-
-  <div class="form-group">
-    <label>
-      Password
-      <input type="password" name="password" class="form-control" required>
-    </label>
-  </div>
-
-  <div class="form-group">
-    <input type="submit" value="Log in" class="btn btn-danger">
-  </div>
-
-</form>
-
-{% endif %}
-
 </div>
-
-{% endblock %}
