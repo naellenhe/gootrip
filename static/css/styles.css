@@ -226,3 +226,8 @@ html, body {
   font-weight: 900;
   font-style: italic;
 }
+
+.modal-title-area {
+  background-color: #619B8A;
+  color : #fff;
+}

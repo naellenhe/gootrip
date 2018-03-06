@@ -155,7 +155,7 @@ function bindInfoWindow(marker, map, infoWindow, content) {
 
 
 function highlightAttraction(marker, map, key) {
-  let attSelector = '.attraction-info[data-attractionid=' + key + '] .thumbnail';
+  let attSelector = '.attraction-info[data-attractionid=' + key + '] .thumbnail-row';
   marker.addListener('mouseover', function() {
     console.log("mouseover the marker of ", key);
 
@@ -548,7 +548,7 @@ function addNewAttractionToRoute(evt) {
                   '" data-attractionname="' + attraction_name + '" data-destid="' + destId +'" data-destname="'+ destName + '"> - </button> ' +
                   '<div class="marker-container">' +
                     '<img src="/static/red_marker.png" alt="{{ att.name }}" style="width:27px;">' +
-                    '<div id="new-marker-digit" class="marker-digit">' + (maxDigit + 1) + '</div>' +
+                    '<div id="new-marker-digit" class="marker-digit">' + (maxDigit) + '</div>' +
                   '</div> ' +
                   '<input class="btn-hidden-input-field" type="text" value="' + attraction_name + '" size="35">' +
                     '<div>' +
@@ -607,7 +607,7 @@ $('.modal').on('hide.bs.modal', function (evt) {
 //When clicking the button, add more empty input field for notes
 $("#btn-append-note").on('click', function(evt){
   evt.preventDefault();
-  $("#note-form").append("<div class='input-note-removed-later'><textarea class='add-note' name='note-content[]' placeholder='add some notes...' rows='3' cols='30'></textarea></div>");
+  $("#note-form").append("<div class='input-note-removed-later note-content'><textarea class='add-note textarea-edit' name='note-content[]' placeholder='Add notes' rows='4' cols='50'></textarea></div>");
 });
 
 

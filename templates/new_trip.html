@@ -47,7 +47,7 @@
 <!-- Add destination form -->
 
 <div id='new-dest-from-form' class='dest-info panel panel-default dest-starts'>
-  <div class="input-group">
+  <div id="add-dest-name-before" class="input-group">
     <input type='text' id='add-dest-name' class='new-dest-input form-control' name='dest-name' placeholder='Destination/City'>
     <span class="input-group-btn">
       <button class="btn btn-default btn-md btn-helper" id='btn-save-dest-name'> + </button>
@@ -105,7 +105,7 @@
       <div>
         <ul>
           <li class='note-info note-content' data-noteid='{{ note.note_id }}'>
-            <textarea class='textarea-edit' rows='4' cols='50' placeholder="Add note">{{ note.content }}</textarea>
+            <textarea class='textarea-edit' rows='4' cols='50' placeholder="Add notes">{{ note.content }}</textarea>
           </li>
         </ul>
       </div>
@@ -127,32 +127,32 @@
 
 <!-- Modal -->
 <div class="modal fade" id="addNewAttractionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document" style='width:500px;'>
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header modal-title-area">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Add new attraction</h4>
       </div>
       <div class="modal-body">
-        <ul id='add-attraction'>
+        <ul id='add-attraction' class='attraction-info'>
           <li id='li-attraction'>
             <div>
-              <input type='text' id='add-attraction-name' name='attraction-name' placeholder='new attraction'>
+              <input type='text' id='add-attraction-name' name='attraction-name' placeholder='New attraction' class='btn-hidden-input-field'>
             </div>
-            <div id='note-form'>
-              <div>
-                <textarea class='add-note' name='note-content[]' placeholder='add some notes...' rows='4' cols='50'></textarea>
+            <div id='note-form' style='margin-top:10px'>
+              <div class='note-content'>
+                <textarea class='add-note textarea-edit' name='note-content[]' placeholder='Add notes' rows='4' cols='50'></textarea>
               </div>
             </div>
             <div>
-              <button id='btn-append-note' class='btn btn-default btn-xs'> + More Notes </button>
+              <button id='btn-append-note' class='btn btn-default btn-md'> + More Notes </button>
             </div>
           </li>
         </ul>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button id="btn-save-new-attraction" type="submit" class="btn btn-primary" data-dismiss="modal">Save and Close</button>
+        <button id="btn-save-new-attraction" type="submit" class="btn btn-primary btn-helper" data-dismiss="modal">Save and Close</button>
       </div>
     </div>
   </div>
@@ -197,7 +197,7 @@
                        $('#trip-info').data('tripid') + "'> - </button>" + 
                        "<input class='btn-hidden-input-field' type='text' value='" + results.name + "'>";
 
-        $("#add-dest-name").replaceWith(destHtml);
+        $("#add-dest-name-before").replaceWith(destHtml);
         console.log(destHtml);
         
       });
