@@ -16,25 +16,15 @@
     position: relative; 
     z-index: 1;
   }
-  /* Optional: Makes the sample page fill the window. */
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  .nav-title {
-    color : white;
-  }
 
   .panel-my-trips {
-      border-color: #BCE784;
+      border-color: #FCCA46;
   }
 
   .panel-my-trips >.panel-heading {
       color: #525174;
-      background-color: #BCE784;
-      border-color: #BCE784;
+/*      background-color: #BCE784;
+      border-color: #BCE784;*/
   }
 
   .list-group-item {
@@ -47,6 +37,15 @@
 
   .form-control {
     background-color: #f4f5f6;
+  }
+
+  .panel-success>.panel-heading {
+    background-color: #FCCA46;
+    border-color: #FCCA46;
+  }
+
+  .list-group-item {
+    border: none;
   }
 
 </style>
@@ -73,13 +72,13 @@
   <div class="container-fluid">
     <!-- Left side section for trip info -->
     <section class="col-xs-12 col-md-4 col-lg-4">
-      <h3>Hi, {{ session["user_name"] }}</h3>
+      <h3 class='greeting-user'>Hi, {{ session["user_name"] }}</h3>
 
       <div class='col-xs-12 col-md-12'>
         <div class='panel panel-success panel-body'>
           <form action='/new-trip-id' method='POST'>
             <div class="input-group">
-              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Creat a new trip' required>
+              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Create a new trip' required>
               <span class="input-group-btn">
                 <button class="btn btn-default" type="submit"> + </button>
               </span>
@@ -94,7 +93,7 @@
           </div>
 <!--           <form class='panel-heading' action='/new-trip-id' method='POST'>
             <div class="input-group">
-              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Creat a new trip' required>
+              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Create a new trip' required>
               <span class="input-group-btn">
                 <button class="btn btn-default" type="submit"> + </button>
               </span>
@@ -104,7 +103,7 @@
           <ul class='list-group'>
             {% for trip in trips|sort(attribute='created_at') %} <!-- start for trips -->
             <li class='list-group-item trip-info' data-tripid='{{ trip.trip_id }}'>
-              <button class='btn btn-default btn-xs btn-delete-trip' data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>
+              <button class='btn btn-default btn-xs btn-delete-trip btn-delete' data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>
                 Delete
               </button>
               <a href='/edit-trip/{{ trip.trip_id }}'>

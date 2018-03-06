@@ -449,7 +449,7 @@ def make_new_attraction():
 
     #Add notes to db
     if not note_contents:
-        note_contents = [' ']
+        note_contents = ['']
 
     for note_content in note_contents:
         new_note = Note(content=note_content, attraction_id=attraction.attraction_id)

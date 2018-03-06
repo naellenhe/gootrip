@@ -5,94 +5,6 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
 <style>
-  /* Always set the map height explicitly to define the size of the div
-   * element that contains the map. */
-  #map {
-    height: 550px;
-    width: 100%;
-  }
-  /* Optional: Makes the sample page fill the window. */
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  li.attraction-info {
-    list-style-type:none;
-  }
-
-  .note-content {
-    list-style-type:none;
-  }
-
-  .marker-container {
-    display: inline-block;
-    position: relative;
-    text-align: center;
-    color: black;
-  }
-
-  .marker-digit {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-/*
-  div.scrollable-area {
-    width: 100%;
-    height: 550px;
-    overflow: scroll;
-  }*/
-
-  .popover {
-    max-width: 500px;
-  }
-
-  .crop {
-   height: 100px;
-   width: 120px;
-   overflow: hidden;
-  }
-
-  .crop img {
-   height: auto;
-   width: 120px;
-
-  }
-
-  .note-list {
-    padding-left: 10px;
-
-  }
-
-  .note-icon {
-    color: #7FB800;
-  }
-
-  .attraction-title {
-    color: #2b2b2b;
-    font-size : 16px;
-  }
-
-  .thumbnail-style {
-    display: block;
-    padding: 12px 4px;
-    margin-bottom: 0px;
-    line-height: 1.42857143;
-    background-color: #fff;
-    border-radius: 0px;
-    border-bottom: 1px solid #ddd;
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
-  }
-
-  .thumbnail-row {
-
-    border-left: 3px solid #7FB800;
-  }
 
 
 </style>
@@ -101,7 +13,7 @@
 {% block dropdown %}
 <li role="presentation" class="dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-    Trip <span class="caret"></span>
+    <span class="nav-title">Trip<span><span class="caret"></span>
   </a>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
     {% for trip in trips %}
@@ -111,24 +23,28 @@
     <li><a href="/dashboard/{{ session['user_id'] }}">Dashboard</a></li>
   </ul>
 </li>
+
 {% endblock %}
 
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid container-fluid-map">
 <section class="col-xs-12 col-md-6 col-lg-6">
 <!-- <h3>Hi, {{ session["user_name"] }}</h3> -->
-<div class='row'>  <!-- First row -->
+<div class='row' style="margin-top: 10px;">  <!-- First row -->
   <div class='col-xs-8'>
-    <h4 id='trip-info' data-tripid='{{ trip.trip_id }}'>Trip: 
-      {{ trip.name }}
-    </h4>
+    <span class='edit-trip-title' id='trip-info' data-tripid='{{ trip.trip_id }}'>
+      Trip: {{ trip.name }}
+    </span>
   </div>
   <div class='col-xs-4'> 
-    <a href='/edit-trip/{{ trip.trip_id }}'><button id='btn-add-new-dest' class='btn btn-default btn-xs'> Edit </button></a>
-    <a href='/new-trip/{{ trip.trip_id }}'><button class="btn btn-default btn-xs"> + New City</button></a>
-    <br><button id='btn-toggle-photo' class='btn btn-default btn-xs'> Show/Hide Photo </button> 
+    <a href='/edit-trip/{{ trip.trip_id }}'><button style="margin-right: 10px" id='btn-add-new-dest' class='btn btn-default btn-md btn-helper'> Edit </button></a>
+
+    <a href='/new-trip/{{ trip.trip_id }}'><button class="btn btn-default btn-md btn-helper"> + New City</button></a>
   </div>
+<!--   <div class='col-xs-1'> 
+    <button id='btn-toggle-photo' class='btn btn-default btn-xs'> Show/Hide Photo </button> 
+  </div> -->
 </div>  <!-- First row ends -->
 
 <!-- <div class="row">
@@ -145,92 +61,106 @@
 </div>
  -->
 
-<div class='scrollable-area'>
+
 {% set label = {'digit': 1} %}
 {% for dest in trip.dests|sort(attribute='created_at') %}
-<div >
-  <div><h4>{{ dest.name }}</h4></div>
-
-  <ul class='row attraction-details' style='display :true'>
-  {% for att in dest.attractions|sort(attribute='created_at') %}
-<!--     <div>
- -->
-    <li class='attraction-info' data-attractionid='{{ att.attraction_id }}'>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="thumbnail thumbnail-style">
-            <div class="row thumbnail-row">
-              <div class="col-xs-9">
-                <div class="row">
-                  <div class="col-xs-1">
-                                <!-- google marker img -->
-                                <div class='marker-container'>
-                                  <img src='/static/red_marker.png' alt='{{ att.name }}' style='width:27px;'>
-                                  <div class='marker-digit'>{{ label.digit }} </div>
-                                  {% if label.update({'digit': (label.digit + 1)}) %}  {% endif %}
-                                </div>                    
-                  </div>
-                  <div class="col-xs-11">
-                                <!-- google marker img ends -->
-                                <!-- boostrap popover on the attraction name -->
-                                {% if att.description %}
-                                <div class='caption'>
-                                  <a class='attraction-pop-wiki' tabindex="0" data-trigger="focus" data-toggle="popover" title='{{ att.name }}(wiki)' data-content="{{ att.description }}" data-placement="right" data-attractionname='{{ att.name }}'><strong class='attraction-title'>{{ att.name }}</strong></a>
-                                </div>
-                                {% else %}
-                                <div class='caption'>
-                                  <strong class='attraction-title'>{{ att.name }}</strong>
-                                </div>
-                                {% endif %}
-                  </div>
-                                
-                </div>
-                <div class="row">
-                  <div class="col-xs-12">
-
-                                <!-- boostrap popover on the attraction name ends -->
-                                  <ul class="note-list">
-                                    {% for note in att.notes|sort(attribute='created_at') %}
-                                      {% if note.content and (note.content != ' ') %}
-                                      <li class='note-content'>
-                                        <span class="glyphicon glyphicon-paperclip note-icon" aria-hidden="true"></span>
-                                        {{ note.content|safe }}
-                                      </li>
-                                      {% endif %}
-                                    {% endfor %}<!-- end for att.notes -->
-                                  </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-xs-3">
-                <div class='attraction-photo'>
-                  {% if att.photo %} 
-                  <div class="crop">
-                    <img align="middle" src={{ att. photo }} alt={{ att.name }} style='display :true'>
-                  </div>
-                  {% endif %} <!-- end for att.photo -->
-                  
-                </div>
-              </div>
-
-            </div>
-          </div>           
+<div>
+  <div class="dest-starts">
+    <div>
+      <span class='dest-title'>{{ dest.name }}
+        <div style='display: inline-block;'>
+          <span class="glyphicon glyphicon-chevron-down toggle-dest-content btn btn-xs" aria-hidden="true" role="button" data-toggle="collapse" href="#collapse{{ dest.dest_id }}" aria-expanded="true" aria-controls="collapse{{ dest.dest_id }}"></span>
         </div>
-      </div>
-    </li>
-<!--   </div>
- -->
-  {% endfor %}<!-- end for dest.attractions -->
-  </ul>
+      </span>
+    </div>
+  </div>
 
+<div class="collapse in" role="tabpanel" id="collapse{{ dest.dest_id }}" aria-labelledby="collapse{{ dest.dest_id }}">
+  <div class='scrollable-area'>
+    <ul class='row attraction-details' data-destid='{{ dest.dest_id }}'  style="padding-left: 0px;">
+    {% for att in dest.attractions|sort(attribute='created_at') %}
+  <!--     <div>
+   -->
+      <li class='attraction-info' data-attractionid='{{ att.attraction_id }}'>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="thumbnail thumbnail-style">
+              <div class="row thumbnail-row">
+                <div class="col-xs-9">
+                  <div class="row">
+                    <div class="col-xs-1">
+                                  <!-- google marker img -->
+                                  <div class='marker-container'>
+                                    <img src='/static/red_marker.png' alt='{{ att.name }}' style='width:27px;'>
+                                    <div class='marker-digit'>{{ label.digit }} </div>
+                                    {% if label.update({'digit': (label.digit + 1)}) %}  {% endif %}
+                                  </div>                    
+                    </div>
+                    <div class="col-xs-11">
+                                  <!-- google marker img ends -->
+                                  <!-- boostrap popover on the attraction name -->
+                                  {% if att.description %}
+                                  <div class='caption'>
+                                    <a class='attraction-pop-wiki' tabindex="0" data-trigger="focus" data-toggle="popover" title='{{ att.name }} (Extracted from Wikipedia)' data-content="{{ att.description }}" data-placement="right" data-attractionname='{{ att.name }}'><strong class='attraction-title'>{{ att.name }}</strong></a>
+                                  </div>
+                                  {% else %}
+                                  <div class='caption'>
+                                    <strong class='attraction-title'>{{ att.name }}</strong>
+                                  </div>
+                                  {% endif %}
+                    </div>
+                                  
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12">
 
+                                  <!-- boostrap popover on the attraction name ends -->
+                                    <ul class="note-list">
+                                      {% for note in att.notes|sort(attribute='created_at') %}
+                                        {% if note.content and (note.content != ' ') %}
+                                        <li class='note-content'>
+                                          <div>
+                                            <p class="note-para">
+<!--                                               <span class="glyphicon glyphicon-paperclip note-icon" aria-hidden="true"></span>
+ -->                                            {{ note.content|safe }}</p>
+                                          </div>
+                                        </li>
+                                        {% endif %}
+                                      {% endfor %}<!-- end for att.notes -->
+                                    </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xs-3" style="padding-right: 0px;">
+                  <div class='attraction-photo'>
+                    {% if att.photo %} 
+                    <div class="crop">
+                      <img align="middle" src={{ att. photo }} alt={{ att.name }} style='display :true'>
+                    </div>
+                    {% endif %} <!-- end for att.photo -->
+                    
+                  </div>
+                </div>
+
+              </div>
+            </div>           
+          </div>
+        </div>
+      </li>
+  <!--   </div>
+   -->
+    {% endfor %}<!-- end for dest.attractions -->
+    </ul>
+
+  </div>
 </div>
 
 {% endfor %} <!-- end for trip.dests -->
 </div>
+
 </section>
-<section class="col-xs-12 col-md-6 col-lg-6">
+<section class="col-xs-12 col-md-6 col-lg-6 col-map">
   <div id="map"></div>
 </section>
 </div>
@@ -374,6 +304,19 @@
   $('#btn-toggle-photo').on('click', function(){
     $('.attraction-photo img').toggle();    
   });
+
+
+  $("span.toggle-dest-content").on('click', function(evt) {
+    console.log(evt.target);
+    if ($(evt.target).hasClass("glyphicon-chevron-down")){
+      $(evt.target).removeClass("glyphicon-chevron-down");
+      $(evt.target).addClass("glyphicon-chevron-up");
+    } else {
+      $(evt.target).removeClass("glyphicon-chevron-up");
+      $(evt.target).addClass("glyphicon-chevron-down");
+    }
+  });
+
 
   //  Opt-in functionality
   // For performance reasons, the Tooltip and Popover data-apis are opt-in, meaning you must initialize them yourself.

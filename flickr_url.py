@@ -25,7 +25,8 @@ def get_flickr_photo_url(attraction, lat, lng):
                                   media='photos',
                                   text=attraction,
                                   lat=lat,
-                                  lon=lng
+                                  lon=lng,
+                                  extras='url_sq,url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o',
                                   )
 
     url = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg'
@@ -34,12 +35,15 @@ def get_flickr_photo_url(attraction, lat, lng):
 
     urls = []
 
+    # for img in imgs:
+    #     farm = img.get('farm')
+    #     server = img.get('server')
+    #     user_id = img.get('id')
+    #     secret = img.get('secret')
+    #     urls.append(url.format(farm=farm, server=server, id=user_id, secret=secret))
+
     for img in imgs:
-        farm = img.get('farm')
-        server = img.get('server')
-        user_id = img.get('id')
-        secret = img.get('secret')
-        urls.append(url.format(farm=farm, server=server, id=user_id, secret=secret))
+      urls.append(img.get('url_q'))
 
     if urls != []:
         return random.choice(urls)

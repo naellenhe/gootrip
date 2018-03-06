@@ -5,41 +5,15 @@
   <title>GooTrip!</title>
   <link rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="/static/styles.css"> -->
+  <link rel="stylesheet" href="/static/css/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   <!-- jQuery autocomplete UI -->
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <style type="text/css">
-
-  html, body {
-    font-family: jaf-bernino-sans,Helvetica,Arial,sans-serif;
-  }
-
-  .navbar-default {
-    background-color: #F6511D;
-    border-color: #F6511D;
-  }
-
-
-  .navbar {
-    border-radius: 0px;
-  }
-
-
-  .navbar-default .navbar-brand {
-    font-size: 25px;
-    color : white;
-  }
-
-  .btn-navbar-custom {
-    color: #fff;
-    background-color: #fff0;
-    border-color: #fff;
-    width: 100px;
-  }
 
   </style>
 
@@ -50,7 +24,7 @@
 
 <body>
   <!-- Static navbar -->
-  <nav class="navbar navbar-default">
+  <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header col-xs-4">
           {% if "user_id" not in session %}

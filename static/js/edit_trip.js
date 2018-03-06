@@ -166,6 +166,9 @@ function highlightAttraction(marker, map, key) {
   });
 }
 
+
+
+
 /////////////////////////////
 // geocoding by place name //
 /////////////////////////////
@@ -485,13 +488,13 @@ function getRecommendedAttraction(destId, destName){
     //if the level is 1 which means it has the highest similarity
     if (response.recommended_atts.length > 0){
       if (response.recommended_level == '1'){
-        recommendAttractionHtml += 'People who visited the attractions in your list also visited:<br>';
+        recommendAttractionHtml += '<p class="recommended-level">People who visited the attractions in your list also visited:</p>';
       } else {
-        recommendAttractionHtml += 'Popular attractions in the city:<br>';
+        recommendAttractionHtml += '<p class="recommended-level">Popular attractions in the city:</p>';
       }
 
       for (let recommended_att of response.recommended_atts){
-        recommendAttractionHtml += "<button class='btn btn-default btn-xs' data-toggle='modal' data-target='#addNewAttractionModal' data-destid='" +  destId + "' data-destname='" + destName + "' data-attractionname='" + recommended_att +  "'>" + recommended_att + "</button> ";
+        recommendAttractionHtml += "<button class='btn btn-default btn-sm btn-recommended-atts' data-toggle='modal' data-target='#addNewAttractionModal' data-destid='" +  destId + "' data-destname='" + destName + "' data-attractionname='" + recommended_att +  "'>" + recommended_att + "</button> ";
       }
     }
     $(destSelector).html(recommendAttractionHtml);
@@ -531,8 +534,8 @@ function addNewAttractionToRoute(evt) {
 
     let noteHtmls = '';
     for (let note of notes){
-      let noteHtml = '<li class="note-info" data-noteid="' + note.note_id + '">' +
-                      '<input class="btn-hidden-input-field" type="text" value="'+ note.content + '" size="60">' +
+      let noteHtml = '<li class="note-info note-content" data-noteid="' + note.note_id + '">' +
+                      '<textarea class="textarea-edit" rows="4" cols="50" placeholder="Add note">'+ note.content + '</textarea>' +
                      '</li>'; 
       noteHtmls += noteHtml;
     }
@@ -630,4 +633,11 @@ $( document ).ready(function(){
 });
 
 
+// $(".textarea-edit").on('focus', function(evt){
+//     $(evt.target).css('background-color',"#e5e6e4");
+// });
+
+// $(".textarea-edit").on('focusout', function(evt){
+//     $(evt.target).css('background-color',"#fdf9f0");
+// });
 

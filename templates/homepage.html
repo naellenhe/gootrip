@@ -5,7 +5,7 @@
   <title>GOOTRIP</title>
   <link rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="/static/styles.css"> -->
+  <link rel="stylesheet" href="/static/css/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
@@ -18,15 +18,6 @@
         height: 100%;
     }
 
-
-    .navbar-default {
-      background-color: #F6511D;
-      border-color: #F6511D;
-    }
-
-    .navbar {
-      border-radius: 0px;
-    }
 
     .bg { 
         background-image: url("/static/pexels-photo-297642.jpeg");
@@ -42,21 +33,6 @@
       margin-top: 80px;
     }
 
-    .form-title {
-      color : white;
-    }
-
-    .navbar-default .navbar-brand {
-      font-size: 25px;
-      color : white;
-    }
-
-    .btn-navbar-custom {
-      color: #fff;
-      background-color: #fff0;
-      border-color: #fff;
-      width: 100px;
-    }
 
   </style>
 </head>
@@ -104,8 +80,8 @@
     <div class="col-xs-3 col-xs-offset-2">
       {% if user_action == 'register' %}
       <div>
-        <h1 class="form-title">REGISTER</h1>
-        <h4 class="form-title">FOR YOUR FANTASTIC TRIP</h4>
+        <h1 class="nav-title">REGISTER</h1>
+        <h4 class="nav-title">FOR YOUR FANTASTIC TRIP</h4>
       </div>
 
       <form action="/register" method="POST">
@@ -154,8 +130,8 @@
   {% else %}
 
       <div>
-        <h1 class="form-title">LOG IN</h1>
-        <h4 class="form-title">WELCOME BACK</h4>
+        <h1 class="nav-title">LOG IN</h1>
+        <h4 class="nav-title">WELCOME BACK</h4>
       </div>
 
 
