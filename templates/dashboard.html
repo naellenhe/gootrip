@@ -67,60 +67,56 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container-fluid">
-    <!-- Left side section for trip info -->
-    <section class="col-xs-12 col-md-4 col-lg-4">
-      <h3 class='greeting-user'>Hi, {{ session["user_name"] }}</h3>
+<div class="container-fluid" >
+  <!-- Left side section for trip info -->
+  <section class="col-xs-12 col-md-8 col-lg-8">
+    <div class='greeting-user-area'>
+      <span class='greeting-user'>Hi, {{ session["user_name"] }}</span>
+    </div>
+    <div class='col-xs-12 col-md-12'>
 
-      <div class='col-xs-12 col-md-12'>
-
-
-
-        <div class='panel panel-success panel-my-trips'>
-          <div class='panel-heading'>
-            <h3 class='panel-title'>Your trips:</h3>
-          </div>
-<!--           <form class='panel-heading' action='/new-trip-id' method='POST'>
+      <div class='col-xs-6 col-md-4'>
+        <div class='panel-body trip-panel-new'>
+          <form action='/new-trip-id' method='POST'>
             <div class="input-group">
-              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Create a new trip' required>
+              <input id='new-trip' class="form-control" type='text' name='trip' placeholder='New trip' required>
               <span class="input-group-btn">
-                <button class="btn btn-default" type="submit"> + </button>
+                <button class="btn btn-default btn-helper" type="submit"> + </button>
               </span>
             </div>
-          </form> -->
-          <div class='panel-body'>
-            <form action='/new-trip-id' method='POST'>
-              <div class="input-group">
-                <input id='new-trip' class="form-control" type='text' name='trip' placeholder='Create a new trip' required>
-                <span class="input-group-btn">
-                  <button class="btn btn-default btn-helper" type="submit"> + </button>
-                </span>
-              </div>
-            </form>
-          </div>
-          <ul class='list-group'>
-            {% for trip in trips|sort(attribute='created_at') %} <!-- start for trips -->
-            <li class='list-group-item trip-info' data-tripid='{{ trip.trip_id }}'>
-              <button class='btn btn-default btn-xs btn-delete-trip btn-delete' data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>
-                Delete
-              </button>
-              <a href='/edit-trip/{{ trip.trip_id }}'>
-                <button class='btn btn-default btn-xs'>Edit</button></a>
-      <!--         <a href='/new-trip/{{ trip.trip_id }}'>
-                <button class='btn btn-default btn-xs'>Add</button></a> -->
-              <a href='/trip/{{ trip.trip_id }}'>{{ trip.name }}</a>
-              <span class="badge"></span>
-            </li>
-            {% endfor %} <!-- end for trips -->
-          </ul>
+          </form>
         </div>
-
       </div>
-    </section>
 
+      {% for trip in trips|sort(attribute='created_at') %}
+      <div class='col-xs-6 col-md-4'>
+        <div class='trip-info' data-tripid='{{ trip.trip_id }}'>
+          <div class='panel panel-body trip-panel'>
+            <div class='row'>
+              <div class='col-xs-10'>
+                <div class='trip-name'>
+                  <a href='/trip/{{ trip.trip_id }}'>{{ trip.name }}
+                  <br>
+<!--                   <span style="color: #bcd3e6; font-size:1.5rem;">{{ trip.created_at }}</span>
+ -->                  </a>
+                </div>
+              </div>
+              <div class='col-xs-2'>
+                <button type="button" class="close btn-delete-trip" aria-label="Close" style='margin-right: 3px;'><span aria-hidden="true" data-tripid='{{ trip.trip_id }}' data-tripname='{{ trip.name }}'>&times;</span></button>
+                <a href='/edit-trip/{{ trip.trip_id }}'><button class='btn-edit-trip'><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      {% endfor %}
 
-  </div>
+    </div>
+
+    </div>
+  </section>
+</div>
 
 <script>
 
@@ -154,7 +150,7 @@ $(".btn-delete-trip").on('click', deleteTrip);
   function initMap() {
     let map = new google.maps.Map(document.getElementById('map'), {
       zoom: 2,
-      center: {lat: 37.6653831, lng: -122.4194155}
+      center: {lat: 25, lng: -165}
     });
 
     let infoWindow = new google.maps.InfoWindow({

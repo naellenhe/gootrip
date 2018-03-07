@@ -4,6 +4,7 @@
   height: calc(100vh - 50px);
   width: 100%;
 }
+
 /* Optional: Makes the sample page fill the window. */
 html, body {
   height: 100%;
@@ -16,6 +17,10 @@ html, body {
   color : white;
 }
 
+.nav-title:hover {
+  color : #FCCA46;
+}
+
 .container-fluid-map {
   padding-right: 0;
 }
@@ -23,7 +28,7 @@ html, body {
 .col-map {
   position: fixed;
   right: 0;
-  padding-right: 0px;
+  padding-right: 0;
 }
 
 .navbar-default {
@@ -36,9 +41,23 @@ html, body {
   border-radius: 0;
 }
 
+.navbar-default .navbar-text {
+  color: #FCCA46;
+}
+
 .navbar-default .navbar-brand {
   font-size: 25px;
   color : white;
+}
+
+.navbar-default .navbar-brand:hover {
+  color : #FCCA46;
+}
+
+.navbar-logo {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 8px;
 }
 
 .btn-navbar-custom {
@@ -48,22 +67,25 @@ html, body {
   width: 100px;
 }
 
-.attraction-info {
-  list-style-type:none;
+.btn-navbar-custom:hover {
+  color: #FCCA46;
+  background-color: #fff0;
+  border-color: #FCCA46;
+  width: 100px;
 }
 
-.note-content {
+.attraction-info, .note-content {
   list-style-type:none;
 }
 
 .note-content:before {
-    content: "\e142";
-    font-family: 'Glyphicons Halflings';
-    font-size: 12px;
-    float: left;
-    margin-top: 4px;
-    margin-left: -17px;
-    color: #619B8A;
+  content: "\e142";
+  font-family: 'Glyphicons Halflings';
+  font-size: 12px;
+  float: left;
+  margin-top: 4px;
+  margin-left: -17px;
+  color: #619B8A;
 }
 
 .note-para {
@@ -106,6 +128,11 @@ html, body {
   overflow: scroll;
 }*/
 
+.attraction-area{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .popover {
   max-width: 500px;
 }
@@ -134,7 +161,7 @@ html, body {
 }
 
 .attraction-title {
-  color: #2b2b2b;
+  color: #233D4D;
   font-size : 16px;
 }
 
@@ -158,6 +185,10 @@ html, body {
   margin-left: 0;
   background-color: #fafafa;
 
+}
+
+.thumbnail .caption {
+    cursor: pointer;
 }
 
 .textarea-edit {
@@ -186,7 +217,7 @@ html, body {
 .btn-recommended-atts {
   color: #233D4D;
   margin-bottom: 5px;
-  border: 0px;
+  border: 0;
   background-color: #FCCA46;
 }
 
@@ -194,12 +225,29 @@ html, body {
   font-weight: 900;
   font-size: 24px;
   font-style: italic;
+  color: #619B8A;
 }
 
 .dest-title {
   font-size: 18px;
   font-weight: 300;
+  color: #233D4D;
+/*  background-color: #FCCA46;
+  line-height: 36px;
+  display: inline-block;
+  padding-left: 10px;
+  color:#619B8A;*/
+
 }
+
+.attraction-box {
+  border-left: 6px solid #FCCA46;
+}
+
+.toggle-dest-content:hover {
+  color:#619B8A;
+}
+
 
 .dest-starts {
   margin-top: 12px;
@@ -217,17 +265,87 @@ html, body {
   border: none;
 }
 
-.btn-delete {
-  color: #8c8c8a;
-}
-
-.greeting-user {
-  font-size: 26px;
-  font-weight: 900;
-  font-style: italic;
-}
-
 .modal-title-area {
   background-color: #619B8A;
   color : #fff;
 }
+
+.trip-card{
+    float: left;
+    width: 150px;
+    margin: 10px;
+}
+
+.dashboard-trip-title{
+  background-color: #fff;
+  padding: 5px 10px;
+  font-size: 3.0rem;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 3.2rem;
+}
+
+.greeting-user-area {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.greeting-user {
+  background-color: #fff;
+  padding: 5px 10px;
+  font-size: 3.2rem;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 3.2rem;
+}
+
+.trip-panel {
+  height: 70px;
+  padding: 5px 5px 5px 15px;
+  border-radius: 0px;
+  background-color: #fcca46;
+}
+
+.trip-panel-new {
+  height: 70px;
+  border-radius: 0px;
+  background-color: #fcca46;
+}
+
+.btn-edit-trip {
+  padding: 0;
+  cursor: pointer;
+  background: 0 0;
+  border: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  color: #619B8A;
+  text-shadow: 0 1px 0 #fff;
+  padding-top: 15px;
+  float: right;
+}
+
+.trip-name {
+  padding-top: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.6rem;
+}
+
+.trip-name a:hover {
+  text-decoration: none;
+  color: #FE7F2D;
+}
+
+.trip-panel-new input {
+  border: none;
+  background-color: #f7efd9;
+}
+
+.trip-panel-new input:focus {
+  outline: none;
+  background-color: #e5e6e4;
+}
+
+

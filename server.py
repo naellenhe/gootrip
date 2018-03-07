@@ -510,7 +510,6 @@ def add_attraction_coordinate():
     attraction.attraction_lat = attraction_lat
     attraction.attraction_lng = attraction_lng
 
-
     db.session.commit()
 
     print "##### Developer msg #### Coordinate added to: {}".format(attraction)

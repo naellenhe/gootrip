@@ -35,7 +35,7 @@
 <div class='row' style="margin-top: 10px;">  <!-- First row -->
   <div class='col-xs-8'>
     <div id='trip-info' data-tripid='{{ trip.trip_id }}'>
-      <span class='edit-trip-title'>Editing:
+      <span class='edit-trip-title' data-tripid='{{ trip.trip_id }}'>Editing:
         <input class='btn-hidden-input-field' type='text' value='{{ trip.name }}'>
       </span>
     </div>
@@ -52,7 +52,8 @@
   <div>
     <div class='recommeded-atts' data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}'>Recommendations goes here</div>
   </div>
-  <!-- non-breaking space &nbsp; -->
+  <!-- non-breaking space &nbsp;
+   -->
   &nbsp;
   <!-- button for deleting -->
   <button class='btn btn-default btn-xs btn-del-minus-mark btn-delete-dest' data-destid='{{ dest.dest_id }}' data-destname='{{ dest.name }}' data-tripid='{{ trip.trip_id }}'> - </button>

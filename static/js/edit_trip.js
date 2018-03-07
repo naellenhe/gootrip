@@ -314,7 +314,7 @@ function placeAutocomplete(element_id){
 // EventListener for trip name field
 // The blur event occurs when an element loses focus. 
 // Auto-save to the change to the server
-$('body').on('blur', '#trip-info > input', function(){
+$('body').on('blur', '#trip-info input', function(){
   // console.log($(this).val());
   // console.log($(this).parent().data('tripid'));
   let tripId = $(this).parent().data('tripid');
