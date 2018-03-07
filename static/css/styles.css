@@ -275,9 +275,9 @@ html, body {
 }
 
 .trip-card{
-    float: left;
-    width: 150px;
-    margin: 10px;
+  float: left;
+  width: 150px;
+  margin: 10px;
 }
 
 .dashboard-trip-title{
