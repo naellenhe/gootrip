@@ -6,7 +6,7 @@
   /* Always set the map height explicitly to define the size of the div
    * element that contains the map. */
   #map {
-    height: 100%; 
+    height: calc(100vh - 50px);
     width: 100%; 
     position: absolute; 
     left: 0; 
@@ -196,7 +196,7 @@ $(".btn-delete-trip").on('click', deleteTrip);
   function initMap() {
     let map = new google.maps.Map(document.getElementById('map'), {
       zoom: 2,
-      center: {lat: 25, lng: -165}
+      center: {lat: 25, lng: 150}
     });
 
     let infoWindow = new google.maps.InfoWindow({
@@ -299,11 +299,11 @@ $(".btn-delete-trip").on('click', deleteTrip);
 
 
   function openNav() {
-      document.getElementById("mySidenav").style.width = "100%";
+      document.getElementById("mySidenav").style.display = "block";
   }
 
   function closeNav() {
-      document.getElementById("mySidenav").style.width = "0";
+      document.getElementById("mySidenav").style.display = "none";
   }
 
 </script>
