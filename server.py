@@ -734,13 +734,12 @@ def trip_tree():
                         "notes": [
                             {
                                 'note_id': note.note_id,
-                                'created_at' : note.created_at,
+                                'created_at': note.created_at,
                                 'content': convert_url_to_html_link(note.content),
                             } for note in attraction.notes]
                     } for attraction in dest.attractions]
             } for dest in trip.dests]
     }
-
 
         # attractions = {
         # attraction.attraction_id: {
@@ -750,7 +749,6 @@ def trip_tree():
         # }
         # for attraction in all_attractions
         # }
-
     return jsonify(trip_tree)
 
 
@@ -759,12 +757,12 @@ if __name__ == "__main__":
     # that we invoke the DebugToolbarExtension
 
     # Do not debug for demo
-    app.debug = True
-    app.jinja_env.auto_reload = app.debug
+    # app.debug = True
+    # app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")

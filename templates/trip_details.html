@@ -16,7 +16,7 @@
     <span class="nav-title">Trip<span><span class="caret"></span>
   </a>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-    {% for trip in trips %}
+    {% for trip in trips|sort(attribute='created_at') %}
     <li><a href="/trip/{{ trip.trip_id }}">{{ trip.name }}</a></li>
     {% endfor %}
     <li role="separator" class="divider"></li>

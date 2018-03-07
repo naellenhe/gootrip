@@ -308,12 +308,14 @@ html, body {
   padding: 5px 5px 5px 15px;
   border-radius: 0px;
   background-color: #fcca46;
+  border-left: 10px solid #fe7f2d9c;
 }
 
 .trip-panel-new {
   height: 70px;
   border-radius: 0px;
   background-color: #fcca46;
+  border-left: 10px solid #fe7f2d9c;
 }
 
 .btn-edit-trip {
@@ -330,8 +332,12 @@ html, body {
   float: right;
 }
 
+.btn-edit-trip:hover {
+  color: #36bf97;
+}
+
 .trip-name {
-  padding-top: 10px;
+  padding-top: 8px;
   cursor: pointer;
   font-weight: 600;
   font-size: 1.6rem;
