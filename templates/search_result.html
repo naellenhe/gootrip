@@ -50,14 +50,7 @@
 </div>
 
 
-<script
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM">
-</script>
-
-{% endblock %}
-
-
-{% block footer %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM"></script>
 <script>
 let map, marker, loc, content;
 let infoWindow = new google.maps.InfoWindow({width: 150});
@@ -151,6 +144,10 @@ function highlightAttraction(marker, map, attractionName) {
     $(attSelector).removeAttr('style', 'background-color: #cce6ff;');
   });
 }
-// </script>
+</script>
+{% endblock %}
+
+
+{% block footer %}
 
 {% endblock %}

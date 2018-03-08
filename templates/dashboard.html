@@ -262,13 +262,6 @@ $(".btn-delete-trip").on('click', deleteTrip);
                   // },
               });
 
-              // // Everytime a new marker is added, append to bounds
-              // loc = new google.maps.LatLng(
-              //                   marker.position.lat(),
-              //                   marker.position.lng()
-              //                 );
-              // bounds.extend(loc);
-
               // Content for InfoWindow.
               content = "Destination: " + dest.destName
 
@@ -279,9 +272,6 @@ $(".btn-delete-trip").on('click', deleteTrip);
             }
         }
 
-        // map.fitBounds(bounds);       // auto-zoom
-        // map.panToBounds(bounds);     // auto-center
-
         // Opens the InfoWindow when marker is clicked.
         function bindInfoWindow(marker, map, infoWindow, content) {
           marker.addListener('click', function() {
@@ -291,12 +281,9 @@ $(".btn-delete-trip").on('click', deleteTrip);
             infoWindow.open(map, marker);
           });
         }
-
       } // end of if statement
-
     }); // end of ajax get method
   }
-
 
   function openNav() {
       document.getElementById("mySidenav").style.display = "block";
@@ -312,8 +299,6 @@ $(".btn-delete-trip").on('click', deleteTrip);
 {% endblock %}
 
 
-
 {% block footer %}
-
 
 {% endblock %}

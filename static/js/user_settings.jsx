@@ -37,7 +37,7 @@ class ChangeProfile extends React.Component {
     handleUserInputChange(change){
         // console.log(change);
         this.setState(change);
-        console.log('current state is ', this.state);
+        // console.log('current state is ', this.state);
     }
 
 
@@ -73,7 +73,7 @@ class ChangeProfile extends React.Component {
                                 change={this.handleUserInputChange} />);
         }
 
-        console.log(this.state);
+        // console.log(this.state);
 
         let userInfoTitlesUpper = ['Name', 'Email', 'Password', 'Birthyear', 'Zipcode'];
         let userInfoTitles = ['name', 'email', 'password', 'birthyear', 'zipcode'];
@@ -153,9 +153,7 @@ class UserInfo extends React.Component {
   }
 
   handleChange(e){
-    // e.target.value is only accessible by the input element itself
-    // this.props.change({ [this.props.userInfo]: e.target.value});
-    console.log({ [this.props.userInfo]: e.target.value})
+    // console.log({ [this.props.userInfo]: e.target.value})
     this.setState({'userInfoContent': e.target.value});
   }
 
@@ -164,10 +162,8 @@ class UserInfo extends React.Component {
   handleSubmit(e){
     e.preventDefault();
     // cannot get e.target.value, instead use this.state
-    console.log(this.props.userInfo + " is now changed to:" + this.state.userInfoContent);
+    // console.log(this.props.userInfo + " is now changed to:" + this.state.userInfoContent);
     this.props.change({ [this.props.userInfo]: this.state.userInfoContent});
-    // console.log({ [this.props.userInfo]: this.state.userInfoContent})
-    // this.setState({'userInfoContent': this.state.userInfoContent});
   }
 
   render() {

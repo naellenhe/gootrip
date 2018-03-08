@@ -1,8 +1,10 @@
 import flickrapi
 import random
+import os
 
-api_key = u'500072adc6bc7a46dbf6ffcefc488a94'
-api_secret = u'c483bc161f6343be'
+api_key = os.environ['FLICKR_API_KEY']
+api_secret = os.environ['FLICKR_API_SECRET']
+
 flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
 
 def get_flickr_photo_url(attraction, lat, lng):
@@ -29,7 +31,7 @@ def get_flickr_photo_url(attraction, lat, lng):
                                   extras='url_sq,url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o',
                                   )
 
-    url = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg'
+    # url = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg'
 
     imgs = search['photos']['photo'][:10]
 
@@ -43,7 +45,7 @@ def get_flickr_photo_url(attraction, lat, lng):
     #     urls.append(url.format(farm=farm, server=server, id=user_id, secret=secret))
 
     for img in imgs:
-      urls.append(img.get('url_q'))
+        urls.append(img.get('url_q'))
 
     if urls != []:
         return random.choice(urls)

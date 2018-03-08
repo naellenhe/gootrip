@@ -49,13 +49,10 @@ function initMap() {
       // }
 
       let attractions = dests_attractions[dest_id];
-      // console.log(attractions);
       let count = Object.keys(attractions).length;
 
       if (count !== 0) {
         let attraction;
-        // let totalLat = 0;
-        // let totalLng = 0;
 
         let keys = Object.keys(attractions);
         keys.sort();
@@ -95,37 +92,29 @@ function initMap() {
               );
               bounds.extend(loc);
 
-              // Content for InfoWindow.
+              // Content for InfoWindow
               content = "Attraction: " + attraction.attractionName;
 
               // Inside the loop we call bindInfoWindow passing it the marker,
-              // map, infoWindow, and contentString
+              // map, infoWindow, and content
               bindInfoWindow(marker, map, infoWindow, content);
 
               highlightAttraction(marker, map, key);
-
-              // Calculate the average LatLng with all given positions
-              // totalLat += parseFloat(attraction.attractionLat);
-              // totalLng += parseFloat(attraction.attractionLng);
             }
         }
       }
-      // if (totalLng  && totalLat){
-      // map.setCenter({lat: totalLat/count, lng: totalLng/count});
-      // }
 
       map.fitBounds(bounds);       // auto-zoom
       map.panToBounds(bounds);     // auto-center
     } // end of if statement
   }); // end of ajax get method
-
 }
 
 // Adds a marker to the map.
 function addMarker(markerPosition, map, attractionName) {
+
   // Add the marker at the clicked location, and add the next-available label
   // from the array of alphabetical characters.
-
   marker = new google.maps.Marker({
       position: markerPosition,
       map: map,
@@ -165,8 +154,6 @@ function highlightAttraction(marker, map, key) {
     $(attSelector).removeAttr('style', 'background-color: #cce6ff;');
   });
 }
-
-
 
 
 /////////////////////////////
@@ -281,34 +268,7 @@ function placeAutocomplete(element_id){
   let destInput = document.getElementById(element_id);
   let autocomplete = new google.maps.places.Autocomplete(destInput);
 
-  // Bind the map's bounds (viewport) property to the autocomplete object,
-  // so that the autocomplete requests use the current map bounds for the
-  // bounds option in the request.
-  // autocomplete.bindTo('bounds', map);
-  // autocomplete.addListener('place_changed', function() {
-
-  //   var place = autocomplete.getPlace();
-  //   console.log('place:', place);
-  //   console.log('place address', place.address_components);
-  //   console.log('place.geometry lat', place.geometry.location.lat());
-  //   if (!place.geometry) {
-  //     // User entered the name of a Place that was not suggested and
-  //     // pressed the Enter key, or the Place Details request failed.
-  //     window.alert("No details available for input: '" + place.name + "'");
-  //     return;
-  //   }
-
-  //   // If the place has a geometry, then present it on a map.
-  //   if (place.geometry.viewport) {
-  //     console.log('viewport', place.geometry.viewport);
-  //   } else {
-  //     console.log('location', place.geometry.location);
-  //   }
-
-  // });
 }
-
-
 
 
 // EventListener for trip name field
@@ -331,6 +291,7 @@ $('body').on('blur', '#trip-info input', function(){
   }
 });
 
+
 // EventListener for destination name field
 // The blur event occurs when an element loses focus. 
 // Auto-save to the change to the server
@@ -350,6 +311,7 @@ $('body').on('blur', '.dest-info > input:not(#add-dest-name)', function(){
     });    
   }
 });
+
 
 // EventListener for attraction name field
 // The blur event occurs when an element loses focus. 
@@ -371,6 +333,7 @@ $('body').on('blur','.attraction-info > input', function(){
   }
 });
 
+
 // EventListener for note content field
 // The blur event occurs when an element loses focus. 
 // Auto-save to the change to the server
@@ -385,25 +348,6 @@ $('body').on('blur','.note-info > textarea', function(){
     console.log(results);
   });
 });
-
-// /////////////// testing for newly added attraction /////////////////
-// // EventListener for attraction name field
-// // The blur event occurs when an element loses focus. 
-// // Auto-save to the change to the server
-// $('body').on('blur','.new-attraction-info input', function(){
-//   // console.log('1', $(this));
-//   // console.log('2', $(this).val());
-//   // console.log('3', $(this).parent());
-//   // console.log('3', $(this).parent('.new-attraction-info'));
-//   // console.log('4', $(this).parent().data('attractionid'));
-//   let attractionId = $(this).parent().data('attractionid');
-//   let attractionName = $(this).val();
-//   let attractionInfo = {'attraction_id': attractionId,
-//                         'attraction_name': attractionName};
-//   $.post('/update-attraction.json', attractionInfo, function(results){
-//     console.log(results);
-//   });
-// });
 
 
 // EventListener when mouse over the input fields, show border to let user know it's editable
@@ -445,6 +389,7 @@ function deleteDest(evt){
 
 $('body').on('click', '.btn-delete-dest', deleteDest);
 
+
 //Delete a attraction and its note
 function deleteAttraction(evt){
   let target = $(evt.target);
@@ -469,9 +414,6 @@ function deleteAttraction(evt){
 }
 
 $('body').on('click', '.btn-delete-attraction', deleteAttraction);
-
-
-
 
 
 //Recommend users attractions based on their current choices to a specific destination.
@@ -566,7 +508,6 @@ function addNewAttractionToRoute(evt) {
 }
 
 
-
 $('.modal').on('show.bs.modal', function (evt) {
   let button = $(evt.relatedTarget); // Button that triggered the modal
   let destId = button.data('destid'); // Extract info from data-* attributes
@@ -592,10 +533,6 @@ $('.modal').on('show.bs.modal', function (evt) {
   $('#btn-save-new-attraction').on('click', addNewAttractionToRoute);
 });
 
-// When the user clicked 'add a new destination' button
-// Send request to '/new-dest-id' route with a placeholder-kind dest_name
-// When got the trip_id, send request to '/new-attraction' with with a placeholder-kind attraction_name
-// Go to the same 'edit-trip' page
 
 // Noted added on previous modal will be removed after it closed
 $('.modal').on('hide.bs.modal', function (evt) {
@@ -611,18 +548,6 @@ $("#btn-append-note").on('click', function(evt){
 });
 
 
-// //Recommend users attractions based on their current choices to a specific destination.
-// function getRecommendedAttraction(evt){
-//   let destId = $(evt.target).data('destid');
-//   let destName = $(evt.target).data('destname');
-//   $.post('/get-recommendation', {dest_id: destId, dest_name: destName}, function(response){
-//     console.log(response);
-//     let destSelector = ".recommeded-atts[data-destid='" + destId + "']";
-//     $(destSelector).text(response.recommended_atts);
-//   });
-
-// }
-
 $( document ).ready(function(){
   $(".recommeded-atts").each(function(){
     let destId = $( this ).data('destid');
@@ -631,13 +556,4 @@ $( document ).ready(function(){
     getRecommendedAttraction(destId, destName);
   });
 });
-
-
-// $(".textarea-edit").on('focus', function(evt){
-//     $(evt.target).css('background-color',"#e5e6e4");
-// });
-
-// $(".textarea-edit").on('focusout', function(evt){
-//     $(evt.target).css('background-color',"#fdf9f0");
-// });
 

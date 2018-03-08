@@ -126,12 +126,6 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
-/*.scrollable-area {
-  width: 100%;
-  height: 550px;
-  overflow: scroll;
-}*/
-
 .attraction-area{
   margin-left: 10px;
   margin-right: 10px;
@@ -152,7 +146,6 @@ html, body {
 .crop img {
   height: auto;
   width: 120px;
-
 }
 
 .note-list {
@@ -172,14 +165,14 @@ html, body {
 .thumbnail-style {
   display: block;
   padding: 12px 10px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
   line-height: 1.42857143;
   background-color: #fff;
-  border-radius: 0px;
+  border-radius: 0;
   border-bottom: 1px solid #ddd;
-  border-top: 0px;
-  border-left: 0px;
-  border-right: 0px;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
   margin-left: 15px;
   margin-right: 15px;
 }
@@ -236,12 +229,6 @@ html, body {
   font-size: 18px;
   font-weight: 300;
   color: #233D4D;
-/*  background-color: #FCCA46;
-  line-height: 36px;
-  display: inline-block;
-  padding-left: 10px;
-  color:#619B8A;*/
-
 }
 
 .attraction-box {
@@ -306,14 +293,14 @@ html, body {
 .trip-panel {
   height: 70px;
   padding: 5px 5px 5px 15px;
-  border-radius: 0px;
+  border-radius: 0;
   background-color: #fcca46;
   border-left: 10px solid #fe7f2d9c;
 }
 
 .trip-panel-new {
   height: 70px;
-  border-radius: 0px;
+  border-radius: 0;
   background-color: #fcca46;
   border-left: 10px solid #fe7f2d9c;
 }

@@ -223,6 +223,67 @@ def load_attractions(all_lst):
         db.session.commit()
 
 
+def feed_seed_data():
+    """Feed some data to db"""
+
+    db.create_all()
+
+    print '---------finished create_all()---------'
+    to_continue = raw_input("to continue?")
+
+    user = User(name='ellen', email='ellen30301@gmail.com', password='$argon2i$v=19$m=512,t=2,p=2$PSfkPMd4L0VorbUWAmDMmQ$lzKeHS+Mh9Mv9zwsty2dzQ')
+    trip1 = Trip(name='First trip to Bay Area', user_id=1)
+    trip2 = Trip(name='Backpacking in Mexico', user_id=1)
+    dest1 = Dest(name='San Francisco', dest_lat='37.7749295', dest_lng='-122.4194155')
+    dest2 = Dest(name='San Jose', dest_lat='37.3382082', dest_lng='-121.8863286')
+    dest3 = Dest(name='Oaxaca', dest_lat='17.0731842', dest_lng='-96.7265889')
+    dest4 = Dest(name='Mexico City', dest_lat='19.4326077', dest_lng='-99.133208')
+    attraction1 = Attraction(name='Union Square', dest_id=1, attraction_lat='37.7879797', attraction_lng='-122.4075169')
+    attraction2 = Attraction(name='Fishermans Warf', dest_id=1, attraction_lat='37.8079996', attraction_lng='-122.4177434')
+    attraction3 = Attraction(name='Alcatraz Island', dest_id=1, attraction_lat='37.8269775', attraction_lng='-122.4229555')
+    attraction4 = Attraction(name='Golden Gate Bridge', dest_id=1, attraction_lat='37.8199286', attraction_lng='-122.4782551')
+    attraction5 = Attraction(name='Great Mall', dest_id=2, attraction_lat='37.415738', attraction_lng='-121.897412')
+    attraction6 = Attraction(name='San Jose Musuem of Art', dest_id=2, attraction_lat='37.333675', attraction_lng='-121.890039')
+    attraction7 = Attraction(name='Iglesia de Santo Domingo', dest_id=3, attraction_lat='17.0656987', attraction_lng='-96.7232421')
+    attraction8 = Attraction(name='Monte Alban', dest_id=3, attraction_lat='17.0454573', attraction_lng='-96.76746730000')
+    attraction9 = Attraction(name='Hierve el Agua', dest_id=3, attraction_lat='16.865738', attraction_lng='-96.27603579999')
+    attraction10 = Attraction(name='National Museum of Anthropology', dest_id=4, attraction_lat='19.4260032', attraction_lng='-99.18627859999')
+    attraction11 = Attraction(name='Frida Kahlo Museum', dest_id=4, attraction_lat='19.355143 ', attraction_lng='-99.1625249')
+    attraction12 = Attraction(name='Palacio de Bellas Artes', dest_id=4, attraction_lat='19.4352', attraction_lng='-99.14120000000')
+    note1 = Note(attraction_id=1, content='City tour bus')
+    note2 = Note(attraction_id=1, content='Ice rink')
+    note3 = Note(attraction_id=1, content='Try Andersen Bakery https://unionsquareshop.com/stores/andersen-bakery.html')
+    note4 = Note(attraction_id=2, content='Eat clam chowder')
+    note5 = Note(attraction_id=2, content='Buy socks in The SF Sock Market')
+    note6 = Note(attraction_id=7, content='Dominican church founded in 1575')
+    note7 = Note(attraction_id=8, content='The center of the ruins, rising on a man-made platform 400 meters above the Oaxaca Valley, is possibly Latin America\'s oldest and most impressive Pre-Columbian site.')
+    note8 = Note(attraction_id=9, content='Small-group tour by minibus.One of the falls is 95 feet tall and the other one is 40 feet tall. They are made of carbonated water that falls from the top of the mountain.')
+    note9 = Note(attraction_id=10, content='Considered one of the world\'s most comprehensive natural history museums, this famous institution houses four square kilometers of exhibits in 23 exhibition halls.')
+    note10 = Note(attraction_id=11, content='The lifelong home of Frida Kahlo is now a museum dedicated to the work of this famous 20th-century artist.')
+    note11 = Note(attraction_id=12, content='This historic white marble building serves as both the city\'s top performance hall and an art museum.')
+
+    print '---------finished adding variable names---------'
+    to_continue = raw_input("to continue?")
+
+    db.session.add_all([user,
+                        trip1, trip2,
+                        dest1, dest2, dest3, dest4,
+                        attraction1, attraction2, attraction3, attraction4, attraction5, attraction6,
+                        attraction7, attraction8, attraction9, attraction10, attraction11, attraction12,
+                        note1, note2, note3, note4, note5, note6, note7, note8, note9, note10, note11])
+    db.session.commit()
+
+    print "---------finished data except trips_dests---------"
+    to_continue = raw_input("to continue?")
+
+    td1 = TripDest(trip_id=1, dest_id=1)
+    td2 = TripDest(trip_id=1, dest_id=2)
+    td3 = TripDest(trip_id=2, dest_id=3)
+    td4 = TripDest(trip_id=2, dest_id=4)
+    db.session.add_all([td1, td2, td3, td4])
+    db.session.commit()
+
+    print "Seeds successfully added to db"
 
 
 if __name__ == "__main__":

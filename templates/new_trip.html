@@ -30,7 +30,6 @@
 {% block content %}
 <div class="container-fluid">
 <section class="col-xs-12 col-md-6 col-lg-6">
-<!-- <h3>Hi, {{ session["user_name"] }} </h3> -->
 
 <div class='row' style="margin-top: 10px;">
   <div class='col-xs-8'>
@@ -45,7 +44,6 @@
 </div>
 
 <!-- Add destination form -->
-
 <div id='new-dest-from-form' class='dest-info panel panel-default dest-starts'>
   <div id="add-dest-name-before" class="input-group">
     <input type='text' id='add-dest-name' class='new-dest-input form-control' name='dest-name' placeholder='Destination/City'>
@@ -58,10 +56,6 @@
       <div id='populated-dest-from-form' class='populated-dests'> <!-- newly populated dest -->
       </div> <!-- newly populated dest ends here -->
       <li id='li-attraction' class='add-new-attraction' style='list-style-type:none;'>
-<!--         <div>
-          <input type='text' id='add-attraction-name-form' name='attraction-name' placeholder='new attraction' disabled><br>
-          <textarea id='add-note-form' name='note-content' placeholder='add some notes...' rows='3' cols='30' disabled></textarea>
-        </div> -->
         <div class='panel-body'>
           <!-- Button trigger modal -->
           <button id='btn-populate-attraction-form' class='btn btn-default btn-md btn-add-new-attraction btn-helper' data-toggle="modal" data-target="#addNewAttractionModal" style='display: none;' disabled> + Add new attraction </button>
@@ -207,79 +201,6 @@
   }
   $("#btn-save-dest-name").on('click', getDestId);
 
-
-  /////////////////////////////
-  // geocoding by place name //
-  /////////////////////////////
-
-  // // get geocode for destination 
-  // function getDestGeocode(dest_id, dest_name) {
-  //   let dest = new google.maps.Geocoder();
-  //   let premise = dest_name;
-
-  //   dest.geocode({'address': 'santa cruz'}, function(results, status) {
-  //       if (status === google.maps.GeocoderStatus.OK) {
-  //         map.setCenter(results[0].geometry.location);
-
-  //         // Send the location to db
-  //         let locationResult = {
-  //                         'dest_id': dest_id,
-  //                         'dest_lat': results[0].geometry.location.lat,
-  //                         'dest_lng': results[0].geometry.location.lng
-  //                       };
-
-  //         let loc = {lat: results[0].geometry.location.lat, lng: results[0].geometry.location.lng};
-  //         resetMapCenter(loc);
-
-  //         $.post("/add-dest-coordinate", locationResult, function(results){
-  //           console.log(results);
-  //           console.log("Successfully added coordinate to db");
-  //         });
-
-  //       } else {
-  //         alert('Geocode was not successful for the following reason: ' + status);
-  //       }
-  //     });
-  // }
-
-
-  // //Save all notes to a specific attraction and open new attraction form
-  // function addNewAttraction(evt){
-  //   evt.preventDefault();
-  //   //Multiple notes in one attraction
-  //   // let noteArray = new Array();
-  //   // $("#new-note[name*=note]").each(function(){
-  //   //     noteArray.push($(this).val());
-  //   // });
-    
-  //   // Check the input data is not blank
-  //   if ( $("#add-attraction-name-form").val() == false){
-  //      alert("Attraction cannot be empty!");
-  //   } else {
-  //     let attraction = {'attraction_name': $("#add-attraction-name-form").val(),
-  //                       'dest_id': $('#populated-dest-from-form').data('destid'),
-  //                       'note': $("#add-note-form").val()};
-
-  //     $.post("/new-attraction", attraction, function(results){
-  //       $('#populated-dest-from-form').append("<li><div>" + 
-  //                                    results.name +
-  //                                    "<ul><li> Note: " + results.note +
-  //                                    "</li></ul></div></li>");
-  //       let dest_name = $('#populated-dest-from-form').data('destname');
-  //       let attraction_name = results.name;
-  //       let attraction_id = results.attraction_id;
-  //       addAttractionMarkerByName(dest_name, attraction_id, attraction_name);
-  //       console.log("Found the geocode for:" + results.name);
-
-
-  //     });
-  //     console.log('new attraction is added');
-  //     $('#add-attraction-name-form, #add-note-form').val('');
-  //   }
-  // }
-
-  // $("#btn-save-attraction-name").on('click', addNewAttraction);
-
 </script>
 
 
@@ -288,8 +209,6 @@
 {% block footer %}
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeD1vIu0C2hIMeiLWDD0_4L28Mj8A4YyM&libraries=places"></script>
 
-<!-- <script src="/static/js/get_geocode.js"></script>
- -->
 <script src="/static/js/edit_trip.js"></script>
 <script>
   placeAutocomplete('add-dest-name');

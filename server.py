@@ -16,15 +16,13 @@ from flickr_url import get_flickr_photo_url
 
 from get_wiki_description import get_wiki_description
 
-# import geocoder
-
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 
 # Normally, if you use an undefined variable in Jinja2, it fails silently.
-# This is horrible. Fix this so that, instead, it raises an error.
+# Fix this so that, instead, it raises an error.
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -65,7 +63,6 @@ def register_process():
         zipcode = None
 
     # instantiate a new user
-
     new_user = User(name=name, email=email, password=hashed_password, birthyear=birthyear, zipcode=zipcode)
 
     db.session.add(new_user)
@@ -74,7 +71,7 @@ def register_process():
     session["user_id"] = new_user.user_id
     session["user_name"] = new_user.name
 
-    flash("User {} registered successfully.".format(name))
+    flash("Registered successfully.".format(name))
     return redirect("/dashboard/{}".format(new_user.user_id))
 
 
@@ -89,21 +86,21 @@ def login_form():
 def login_process():
     """Process login."""
 
-    # Get form variables
+    #Get form variables
     email = request.form["email"]
     attempt_password = request.form["password"]
 
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        flash("No such user")
+        flash("No such user.")
         return redirect("/login")
 
-    # Verify if the password matches the hashed password in the db
+    #Verify if the password matches the hashed password in the db
     hashed_password = user.password
 
     if not argon2.verify(attempt_password, hashed_password):
-        flash("Incorrect password")
+        flash("Incorrect password.")
         return redirect("/login")
 
     session["user_id"] = user.user_id
@@ -127,10 +124,8 @@ def logout():
 def get_user_profile():
     """Get user profile info."""
 
-    #request shortcut for JSON
+    #Request shortcut for JSON
     user_id = request.get_json().get('user_id')
-    print request.get_json()
-
     user = User.query.get(user_id)
 
     return jsonify({'name': user.name,
@@ -167,7 +162,7 @@ def update_user_profile():
     new_birthyear = request.get_json().get("birthyear")
     new_zipcode = request.get_json().get("zipcode")
 
-    #get user from database
+    #Get user from database
     user = User.query.get(user_id)
 
     to_update = False
@@ -187,7 +182,7 @@ def update_user_profile():
         user.zipcode = new_zipcode
         to_update = True
 
-    # only updating when the password is not empty string and not same as current password
+    #Only updating when the password is not empty string and not same as current password
     if new_password and not argon2.verify(new_password, user.password):
         user.password = argon2.hash(new_password)
         to_update = True
@@ -198,7 +193,6 @@ def update_user_profile():
     return jsonify({"msg": "successful"})
 
 
-
 @app.route('/get-all-dests', methods=['GET'])
 def get_all_dests():
     """Get list of all destinations (and attractions.)"""
@@ -207,7 +201,7 @@ def get_all_dests():
     dests = [dest[0] for dest in dests]
     dests = list(set(dests))
 
-    # json format: {'dests': [dest1, dest2, ...]}
+    #json format: {'dests': [dest1, dest2, ...]}
     return jsonify(dests=dests)
 
 
@@ -244,13 +238,9 @@ def show_dashboard(user_id):
     """Show dashboard with most recent trip info."""
 
     if "user_id" in session and session["user_id"] == user_id:
-        # #Use user of user_id = 1 for temporary use
-        # user = User.query.get(user_id)
-
-        ####Need to fix to get the most recent trip to show on dashboard###
         trips = Trip.query.filter_by(user_id=user_id).all()
-
         return render_template("dashboard.html", trips=trips)
+
     else:
         return redirect("/")
 
@@ -276,9 +266,10 @@ def make_new_trip_id():
         #Get the id of the trip
         trip = Trip.query.filter_by(name=trip_name, user_id=user_id).first()
 
-        print "##### Developer msg #### Added:", trip
+        print "##### Developer msg ##### Added:", trip
         return redirect('/new-trip/' + str(trip.trip_id))
-    #if the trip is already in the database
+
+    #If the trip is already in the database
     else:
         flash("You've already have the trip. Please create a new trip.")
         return redirect('/')
@@ -295,16 +286,15 @@ def make_new_trip_form(trip_id):
 
     trips = Trip.query.filter_by(user_id=user_id).all()
 
-    # trip = Trip.query.filter_by(trip_id=trip_id, user_id=user_id).first()
-    # Eagerly loading by using join will be more efficient
+    #Eagerly loading by using join will be more efficient
     trip_query = Trip.query.options(db.joinedload('dests').joinedload('attractions').joinedload('notes'))
     trip = trip_query.filter_by(trip_id=trip_id, user_id=user_id).first()
 
-    # if trip is None, go back to homepage
+    #If trip is None, go back to homepage
     if not trip:
         return redirect('/')
 
-    print "##### Developer msg #### Adding to:", trip
+    print "##### Developer msg ##### Adding to:", trip
 
     return render_template("new_trip.html", trip=trip, trips=trips)
 
@@ -344,7 +334,7 @@ def trip_detail(trip_id):
                         "notes": [
                             {
                                 'note_id': note.note_id,
-                                'created_at' : note.created_at,
+                                'created_at': note.created_at,
                                 'content': convert_url_to_html_link(note.content),
                             } for note in attraction.notes]
                     } for attraction in dest.attractions]
@@ -354,8 +344,6 @@ def trip_detail(trip_id):
     # if trip is None, go back to homepage
     if not trip:
         return redirect('/')
-
-    # user = User.query.get(user_id)
 
     return render_template("trip_details.html", trip=trip_tree, trips=trips)
 
@@ -371,18 +359,15 @@ def edit_trip_form(trip_id):
 
     trips = Trip.query.filter_by(user_id=user_id).all()
 
-    # trip = Trip.query.filter_by(trip_id=trip_id, user_id=user_id).first()
-    # Eagerly loading by using join will be more efficient
+    #Eagerly loading by using join will be more efficient
     trip_query = Trip.query.options(db.joinedload('dests').joinedload('attractions').joinedload('notes'))
     trip = trip_query.filter_by(trip_id=trip_id, user_id=user_id).first()
 
-    # if trip is None, go back to homepage
+    #If trip is None, go back to homepage
     if not trip:
         return redirect('/')
 
-    # user = User.query.get(user_id)
-
-    print "##### Developer msg #### Editing:", trip
+    print "##### Developer msg ##### Editing:", trip
 
     return render_template("edit_trip.html", trip=trip, trips=trips)
 
@@ -421,7 +406,7 @@ def make_new_destination_id():
         'name': dest.name,
     }
 
-    print "##### Developer msg #### Destination added:", dest
+    print "##### Developer msg ##### Destination added:", dest
 
     return jsonify(dest_info)
 
@@ -466,7 +451,7 @@ def make_new_attraction():
             } for note in attraction.notes]
     }
 
-    print "##### Developer msg #### Attraction added:", attraction
+    print "##### Developer msg ##### Attraction added:", attraction
 
     return jsonify(attraction_note_info)
 
@@ -486,7 +471,7 @@ def add_dest_coordinate():
 
     db.session.commit()
 
-    print "##### Developer msg #### Coordinate added to: {}".format(dest)
+    print "##### Developer msg ##### Coordinate added to: {}".format(dest)
 
     return "{} coordinate is successfully added to db.".format(dest.name)
 
@@ -503,6 +488,7 @@ def add_attraction_coordinate():
     attraction = Attraction.query.get(attraction_id)
     #Google place photo:
     # photo = get_place_photo_url(attraction.name, attraction_lat, attraction_lng)
+
     #Flickr photo:
     photo = get_flickr_photo_url(attraction.name, attraction_lat, attraction_lng)
 
@@ -512,7 +498,7 @@ def add_attraction_coordinate():
 
     db.session.commit()
 
-    print "##### Developer msg #### Coordinate added to: {}".format(attraction)
+    print "##### Developer msg ##### Coordinate added to: {}".format(attraction)
 
     return "{} coordinate is successfully added to db.".format(attraction.name)
 
@@ -636,7 +622,7 @@ def delete_trip():
     trip_id = request.form.get('trip_id')
     trip = Trip.query.get(trip_id)
 
-    print "##### Developer msg #### Deleting:", trip
+    print "##### Developer msg ##### Deleting:", trip
 
     #Store dests in a list
     dests = trip.dests
@@ -670,7 +656,7 @@ def delete_dest():
     dest_id = request.form.get('dest_id')
     dest = Dest.query.get(dest_id)
 
-    print "##### Developer msg #### Deleting:", dest
+    print "##### Developer msg ##### Deleting:", dest
 
     #Delete the dest_dest_id in association table
     TripDest.query.filter_by(trip_id=trip_id, dest_id=dest_id).delete()
@@ -695,7 +681,7 @@ def delete_attraction():
     attraction_id = request.form.get('attraction_id')
     attraction = Attraction.query.get(attraction_id)
 
-    print "##### Developer msg #### Deleting:", attraction
+    print "##### Developer msg ##### Deleting:", attraction
 
     #Notes of the attraction. Data type: List
     for note in attraction.notes:
@@ -741,14 +727,6 @@ def trip_tree():
             } for dest in trip.dests]
     }
 
-        # attractions = {
-        # attraction.attraction_id: {
-        #     "attractionName": attraction.name,
-        #     "attractionLat": attraction.attraction_lat,
-        #     "attractionLng": attraction.attraction_lng,
-        # }
-        # for attraction in all_attractions
-        # }
     return jsonify(trip_tree)
 
 

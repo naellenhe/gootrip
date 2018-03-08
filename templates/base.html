@@ -30,28 +30,24 @@
       <div class="col-xs-12 col-md-4">
         <div class="navbar-header">
             {% if "user_id" not in session %}
-            <a class="navbar-brand navbar-logo" href="/">
-              <img src='/static/546735.png' alt="brand-icon" height="40" width="40" style="display: inline-block;">
-            </a>
-            <a class="navbar-brand" href="/">
-              <span style="display: inline-block;">GOOTRIP</span>
-            </a>
+              <a class="navbar-brand navbar-logo" href="/">
+                <img src='/static/546735.png' alt="brand-icon" height="40" width="40" style="display: inline-block;"></a>
+              <a class="navbar-brand" href="/">
+                <span style="display: inline-block;">GOOTRIP</span></a>
             {% else %}
-            <a class="navbar-brand navbar-logo" href="/dashboard/{{ session['user_id'] }}">
-              <img src='/static/546735.png' alt="brand-icon" height="40" width="40" style="display: inline-block;">
-            </a>
-            <a class="navbar-brand" href="/dashboard/{{ session['user_id'] }}">
-              <span style="display: inline-block;">GOOTRIP</span>
-            </a>
+              <a class="navbar-brand navbar-logo" href="/dashboard/{{ session['user_id'] }}">
+                <img src='/static/546735.png' alt="brand-icon" height="40" width="40" style="display: inline-block;"></a>
+              <a class="navbar-brand" href="/dashboard/{{ session['user_id'] }}">
+                <span style="display: inline-block;">GOOTRIP</span></a>
             {% endif %}
             <p class="navbar-text">
               {% for flash in get_flashed_messages() %}
                 {{ flash }}
               {% endfor %}
             </p>
-
         </div>
       </div>
+
       <div class="col-xs-12 col-md-8">
         <ul class="nav navbar-nav navbar-right">
           {% block dropdown %}
@@ -63,7 +59,6 @@
           <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/login">Log In</a></div></li>
           {% else %}
           <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/settings">Settings</a></div></li>
-<!--           <li><div class='col-xs-4'><a class="btn btn-default navbar-btn btn-navbar-custom" href="/logout">Log Out</a></div></li> -->
           {% endif %}
           {% if "user_id" in session %}
           <form action='/search' method="POST" class="ui-widget navbar-form navbar-right" role="search">

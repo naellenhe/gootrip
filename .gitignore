@@ -1,4 +1,7 @@
-env
+env/
 *.pyc
-archive_test_file/
+secrets.sh
 .DS_Store
+seed.py
+seed_data/
+archive_test_file/
