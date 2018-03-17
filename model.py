@@ -379,11 +379,11 @@ def format_url_html_link(match):
     return "<a href='{}'>{}</a>".format(match.group(), match.group())
 
 
-def connect_to_db(app):
+def connect_to_db(app, db_uri='postgresql:///gooplanner'):
     """Connect the database to our Flask app."""
 
     # Configure to use our PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///gooplanner'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SQLALCHEMY_ECHO'] = True
     db.app = app

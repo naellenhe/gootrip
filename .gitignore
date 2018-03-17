@@ -5,3 +5,5 @@ secrets.sh
 seed.py
 seed_data/
 archive_test_file/
+test.py
+test_client.py
