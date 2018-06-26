@@ -1,5 +1,7 @@
 ## GooTrip
 
+Environment: python 2.7
+
 #### Hackbright Individual Project
 
 - Technology Stack:
@@ -24,4 +26,47 @@ Google Place API, MediaWiki (Wikipedia API), Flickr API
 
 #### Using Google Place API, MediaWiki (Wikipedia API), Flickr API
 ![api](static/4_api.png)
+
+
+#### Run GooTrip locally
+
+1. Clone this repository
+```python
+cd gootrip
+```
+
+2. Create an virtual environment
+```python
+virtualenv env 
+source env/bin/activate
+```
+
+3. Install required packages
+```python
+pip install -r requirements.txt
+```
+
+4. Get Flicker API and write in secrets.sh
+
+```
+export FLICKR_API_KEY='your_API_key'
+export FLICKR_API_SECRET='your_API_secret_key'
+```
+
+```python
+source secrets.sh
+```
+
+
+5. Create database and initialize the tables
+```python
+createdb gooplanner
+python model.py
+```
+
+6. Run the server
+```python
+python server.py
+```
+
 
